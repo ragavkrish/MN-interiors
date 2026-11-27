@@ -21,7 +21,9 @@
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "vite": "^8.3.0"
+    "vaul": "^1.1.2",
+    "vite": "^8.3.0",
+    "vite-imagetools": "^12.0.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

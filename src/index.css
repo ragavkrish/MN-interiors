@@ -185,7 +185,8 @@
 }
 
 .btn-pink:active,
-.btn-ghost:active {
+.btn-ghost:active,
+.btn-outline-ink:active {
   transform: scale(0.97);
 }
 
@@ -210,6 +211,40 @@
 
 .btn-ghost:hover {
   background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Icons inside buttons never get squeezed by long labels */
+.btn-pink svg,
+.btn-ghost svg,
+.btn-outline-ink svg {
+  flex-shrink: 0;
+}
+
+/* Outlined button for light sections (e.g. "Show more projects") */
+.btn-outline-ink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 700;
+  border-radius: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 160ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-outline-ink:hover {
+    background-color: var(--ink);
+    color: var(--white);
+  }
 }
 
 .btn-lg {
@@ -525,5 +560,148 @@
     animation: hero-fade-in 300ms ease both;
     animation-delay: 0ms !important;
     animation-duration: 300ms !important;
+  }
+}
+
+/* ---------- Project photos (see src/components/ProjectPhoto.tsx) ---------- */
+.photo-blur {
+  filter: blur(16px);
+  transform: scale(1.1);
+  transition: opacity 300ms ease;
+}
+
+.photo-blur.is-hidden {
+  opacity: 0;
+}
+
+.photo-main {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.photo-main.is-loaded {
+  opacity: 1;
+}
+
+.project-placeholder {
+  background-color: #161616;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.035) 0 1px,
+    transparent 1px 14px
+  );
+}
+
+/* Photo stage arrows */
+.gallery-arrow {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: var(--white);
+  backdrop-filter: blur(4px);
+  transition:
+    background-color 150ms ease,
+    opacity 150ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.gallery-arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Centring uses Tailwind's separate `translate` property, so press feedback can use `transform` */
+.gallery-arrow:active {
+  transform: scale(0.95);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery-arrow:hover {
+    background-color: var(--pink);
+  }
+}
+
+@media (max-width: 767px) {
+  /* Phones swipe; arrows would cover the photo */
+  .gallery-arrow {
+    display: none;
+  }
+}
+
+/* ---------- Hero photo (reveals with the pink headline lines) ---------- */
+.hero-photo {
+  animation: hero-photo-reveal 900ms var(--ease-in-out) 200ms both;
+}
+
+@keyframes hero-photo-reveal {
+  from {
+    clip-path: inset(0 0 100% 0 round 18px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 18px);
+  }
+}
+
+.hero-photo-chip {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(10, 10, 10, 0.72);
+  padding: 10px 10px 10px 14px;
+  backdrop-filter: blur(6px);
+  transition: transform 160ms var(--ease-out);
+}
+
+.hero-photo-chip:active {
+  transform: scale(0.98);
+}
+
+.hero-photo-chip-arrow {
+  display: flex;
+  height: 34px;
+  width: 34px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background-color: var(--pink);
+  color: var(--white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-photo {
+    animation: hero-fade-in 300ms ease both;
+  }
+}
+
+/* Phones/tablets: show the hero photo right under the headline, not after the buttons */
+@media (max-width: 1000px) {
+  .grid-hero.hero-grid {
+    gap: 0;
+  }
+  .hero-left {
+    display: contents;
+  }
+  .hero-left > * {
+    order: 2;
+  }
+  .hero-left > .hero-enter-fade,
+  .hero-left > h1 {
+    order: 0;
+  }
+  .hero-photo {
+    order: 1;
+    margin-top: 28px;
   }
 }

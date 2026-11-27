@@ -1,18 +1,22 @@
-import type { CSSProperties } from 'react';
-import { ChatCircleText, Compass, PhoneCall, WhatsappLogo } from '@phosphor-icons/react';
-import { CONTACT_INFO, HERO_SUMMARY_ROWS, MARQUEE_ITEMS } from '../data/content';
+import { ArrowRight, ChatCircleText, PhoneCall, WhatsappLogo } from '@phosphor-icons/react';
+import { CONTACT_INFO, MARQUEE_ITEMS, PROJECTS } from '../data/content';
+import { ProjectPhoto } from './ProjectPhoto';
 
 interface HeroProps {
   onOpenEnquiry: () => void;
+  onOpenProject: (id: string) => void;
 }
 
-export function Hero({ onOpenEnquiry }: HeroProps) {
+/** The hero shows the lead project from the showcase */
+const heroProject = PROJECTS[0];
+
+export function Hero({ onOpenEnquiry, onOpenProject }: HeroProps) {
   return (
     <section id="top" className="w-full bg-[#0A0A0A] text-white">
       <div className="container-main pt-[80px] pb-[76px] max-[680px]:pt-[52px] max-[680px]:pb-[56px]">
-        <div className="grid-hero">
-          {/* Left Column */}
-          <div>
+        <div className="grid-hero hero-grid">
+          {/* Left Column (on phones its children flow around the photo — see .hero-left in index.css) */}
+          <div className="hero-left">
             {/* Outlined status pill */}
             <div className="hero-enter-fade mb-6 inline-flex items-center gap-2.5 rounded-[99px] border border-white/18 px-4 py-2 text-[13px] font-medium text-white/85">
               <span className="live-dot" aria-hidden="true" />
@@ -95,74 +99,35 @@ export function Hero({ onOpenEnquiry }: HeroProps) {
             </p>
           </div>
 
-          {/* Right Column: Ink 2 Summary Card */}
-          <div
-            className="hero-enter-rise rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]"
-            style={
-              {
-                animationDelay: '450ms',
-                animationDuration: '700ms',
-                '--hero-rise': '16px',
-              } as CSSProperties
-            }
-          >
-            <div className="mb-5 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-              <div>
-                <p className="text-[11px] font-semibold tracking-[0.18em] text-[#F31C60] uppercase">
-                  MN INTERIORS · CHENNAI
-                </p>
-                <h2 className="font-display mt-1 text-[19px] leading-[1.3] font-extrabold text-white">
-                  WHY HOMEOWNERS CHOOSE US
-                </h2>
-              </div>
-              <div className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[12px] bg-[#F31C60] text-white">
-                <Compass size={22} weight="fill" aria-hidden="true" />
-              </div>
-            </div>
-
-            <div className="divide-y divide-white/10">
-              {HERO_SUMMARY_ROWS.map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-center justify-between gap-4 py-[15px] first:pt-1 last:pb-1"
-                >
-                  <span
-                    className={
-                      row.highlight
-                        ? 'text-[14.5px] font-semibold text-white'
-                        : 'text-[14px] text-white/75'
-                    }
-                  >
-                    {row.label}
+          {/* Right Column: lead project photo — the work is the first thing you see */}
+          <figure className="hero-photo relative aspect-[4/5] overflow-hidden rounded-[18px] border border-white/10 bg-[#141414] max-[1000px]:aspect-[4/3]">
+            <ProjectPhoto
+              image={heroProject.cover}
+              sizes="(max-width: 1000px) 100vw, 520px"
+              priority
+            />
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent"
+              aria-hidden="true"
+            />
+            <figcaption className="absolute inset-x-4 bottom-4">
+              <button
+                type="button"
+                onClick={() => onOpenProject(heroProject.id)}
+                className="hero-photo-chip"
+              >
+                <span className="flex min-w-0 flex-col text-left">
+                  <span className="text-[11px] font-semibold tracking-[0.14em] text-white/70 uppercase">
+                    {heroProject.category} · {heroProject.area}
                   </span>
-                  {row.href ? (
-                    <a
-                      href={row.href}
-                      className="font-display shrink-0 text-[20px] leading-none font-extrabold tracking-[-0.4px] text-white tabular-nums hover:text-[#F31C60] max-[680px]:text-[18px]"
-                    >
-                      {row.value}
-                    </a>
-                  ) : (
-                    <span
-                      className={`font-display shrink-0 tabular-nums ${
-                        row.highlight
-                          ? 'text-[30px] leading-none font-black tracking-[-0.8px] text-[#F31C60]'
-                          : 'text-[20px] leading-none font-extrabold tracking-[-0.4px] text-white max-[680px]:text-[18px]'
-                      }`}
-                    >
-                      {row.value}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 rounded-[12px] border border-[#F31C60]/35 bg-[#F31C60]/12 px-4 py-3.5 text-[13.5px] leading-[1.55] text-white/85">
-              <strong className="font-semibold text-white">Visit our Kundrathur workshop:</strong>{' '}
-              No. 16, Ganapathy Nagar 1st Street, Sriperumbudur Main Road, Kundrathur, Kavanur,
-              Chennai 600089 ({CONTACT_INFO.hours}).
-            </div>
-          </div>
+                  <span className="truncate text-[14px] font-bold text-white">{heroProject.title}</span>
+                </span>
+                <span className="hero-photo-chip-arrow" aria-hidden="true">
+                  <ArrowRight size={16} weight="bold" />
+                </span>
+              </button>
+            </figcaption>
+          </figure>
         </div>
       </div>
 

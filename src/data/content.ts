@@ -1,9 +1,5 @@
-export interface HeroStackRow {
-  label: string;
-  value: string;
-  highlight?: boolean;
-  href?: string;
-}
+import type { ResponsivePhoto } from './projectImages';
+import { PHOTOS } from './projectImages';
 
 export interface StatItem {
   value: string;
@@ -42,15 +38,6 @@ export interface RoomScope {
   hot?: boolean;
 }
 
-export interface ProjectBenchmark {
-  location: string;
-  title: string;
-  meta: string;
-  summary: string;
-  result: string;
-  hot?: boolean;
-}
-
 export interface Testimonial {
   quote: string;
   name: string;
@@ -75,19 +62,40 @@ export type ShowcaseCategory =
   | 'Kitchens'
   | 'Wardrobes'
   | 'Pooja & TV Units'
+  | 'Full Homes'
   | 'Living & Shops';
 
-export interface ShowcaseItem {
+/** One frame in a project's gallery. No `photo` = placeholder until a real photo is added. */
+export interface ProjectImage {
+  photo?: ResponsivePhoto;
+  /** Describe the room, not "image of kitchen" */
+  alt: string;
+  /** What this frame should show — used as the placeholder label (and as a shot list for real photos) */
+  shot: string;
+}
+
+export interface ShowcaseProject {
   id: string;
   title: string;
   category: Exclude<ShowcaseCategory, 'All Work'>;
   area: string;
-  summary: string;
+  propertyType?: string;
+  scope: string[];
+  durationWeeks?: number;
+  year?: number;
+  /** Key materials & build details, shown as chips */
   highlights: string[];
-  imageSrc: string;
-  imageAlt: string;
-  enquiryScope: string;
+  summary: string;
+  /** Short proof line, e.g. "Completed neatly as promised" */
+  outcome?: string;
+  cover: ProjectImage;
+  gallery: ProjectImage[];
+  /** Links a TESTIMONIALS entry by client name — only link a review to that client's real project */
+  reviewName?: string;
   featured?: boolean;
+  /** True until real photos and details are added — tiles say "Photos coming soon" */
+  placeholder?: boolean;
+  enquiryScope: string;
 }
 
 export const SHOWCASE_CATEGORIES: ShowcaseCategory[] = [
@@ -95,16 +103,35 @@ export const SHOWCASE_CATEGORIES: ShowcaseCategory[] = [
   'Kitchens',
   'Wardrobes',
   'Pooja & TV Units',
+  'Full Homes',
   'Living & Shops',
 ];
 
-// Tip: To display your own site photos later, simply replace the imageSrc path on any item below.
-export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
+/** Standard shot list for every project (see plans/showcase-overhaul.md §5) */
+const SHOTS = {
+  wide: 'Wide shot of the whole room',
+  angle: 'Second angle from the opposite corner',
+  detail: 'Open drawer or shutter detail',
+  closeUp: 'Close-up of handle, edge or texture',
+};
+
+const placeholderFrames = (room: string, shots: string[] = [SHOTS.angle, SHOTS.detail, SHOTS.closeUp]) =>
+  shots.map((shot) => ({ alt: `${room} — ${shot.toLowerCase()} (photo coming soon)`, shot }));
+
+/**
+ * All showcase projects. Order matters: the first project leads the grid (large tile),
+ * the next 2 sit beside it, then a 2-up row, then a 3-column grid. The first 8 show before "Show more".
+ *
+ * To swap in real photos later: add them in src/data/projectImages.ts and set `photo`
+ * on the cover / gallery frames below. Remove `placeholder: true` once a project is real.
+ */
+export const PROJECTS: ShowcaseProject[] = [
   {
     id: 'modular-kitchen',
     title: 'Warm Wood & Matte Modular Kitchen',
     category: 'Kitchens',
     area: 'Kundrathur, Chennai',
+    scope: ['Modular kitchen', 'Loft storage', 'Under-cabinet lighting'],
     summary:
       'Spacious U-shaped family kitchen built for daily South Indian cooking, pairing warm wood-grain base cabinets with clean matte overhead storage, full loft units, and bright under-cabinet lighting.',
     highlights: [
@@ -112,9 +139,12 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
       'Full overhead loft storage with smooth soft-close drawers',
       'Clean quartz counter with warm under-cabinet strip lighting',
     ],
-    imageSrc: '/src/assets/images/mn_kitchen_showcase_1795762703455.jpg',
-    imageAlt:
-      'Modern Chennai modular kitchen with warm wood lower cabinets, matte cream upper units, loft storage, and warm under-cabinet lighting',
+    cover: {
+      photo: PHOTOS.kitchen,
+      alt: 'Modern Chennai modular kitchen with warm wood lower cabinets, matte cream upper units, loft storage, and warm under-cabinet lighting',
+      shot: SHOTS.wide,
+    },
+    gallery: placeholderFrames('Modular kitchen'),
     enquiryScope: 'Modular Kitchen',
     featured: true,
   },
@@ -123,6 +153,7 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
     title: 'Backlit TV Feature Wall & Display Units',
     category: 'Pooja & TV Units',
     area: 'Porur, Chennai',
+    scope: ['TV feature wall', 'Display cabinets', 'Concealed lighting'],
     summary:
       'Living room TV wall finished with a marble-look center panel, fluted warm wood side slats with concealed warm LED strips, floating console drawers, and lit glass display cabinets.',
     highlights: [
@@ -130,9 +161,12 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
       'Tall glass-front display cabinets for idols & family decor',
       'Floating wooden TV console with clutter-free cable routing',
     ],
-    imageSrc: '/src/assets/images/mn_tv_wall_showcase_1795762706221.jpg',
-    imageAlt:
-      'Contemporary Chennai living room TV feature wall with fluted wood slats, warm LED lighting, marble backdrop, and lit glass display cabinets',
+    cover: {
+      photo: PHOTOS.tvWall,
+      alt: 'Contemporary Chennai living room TV feature wall with fluted wood slats, warm LED lighting, marble backdrop, and lit glass display cabinets',
+      shot: SHOTS.wide,
+    },
+    gallery: placeholderFrames('TV feature wall'),
     enquiryScope: 'Pooja Room / TV Unit',
   },
   {
@@ -140,6 +174,7 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
     title: 'Decorative Peacock Pooja Unit',
     category: 'Pooja & TV Units',
     area: 'Kavanur, Chennai',
+    scope: ['Pooja mandapam', 'Lattice doors', 'Backlighting'],
     summary:
       'Peaceful home pooja mandapam with matte double doors featuring traditional peacock and diya lattice cutouts, warm golden backlighting, handy storage drawer, and side glass niches for lamps.',
     highlights: [
@@ -147,9 +182,12 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
       'Warm golden interior lighting highlighting brass lamps & idols',
       'Bottom drawer storage for pooja essentials & daily convenience',
     ],
-    imageSrc: '/src/assets/images/mn_pooja_unit_showcase_1795762706457.jpg',
-    imageAlt:
-      'South Indian home pooja room cabinet with pearl-grey decorative peacock lattice doors, warm wood frame, and lit side glass shelves',
+    cover: {
+      photo: PHOTOS.pooja,
+      alt: 'South Indian home pooja room cabinet with pearl-grey decorative peacock lattice doors, warm wood frame, and lit side glass shelves',
+      shot: SHOTS.wide,
+    },
+    gallery: placeholderFrames('Pooja unit'),
     enquiryScope: 'Pooja Room / TV Unit',
   },
   {
@@ -157,6 +195,7 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
     title: 'Full-Height Bedroom Wardrobes & Loft',
     category: 'Wardrobes',
     area: 'Anna Nagar, Chennai',
+    scope: ['Bedroom wardrobes', 'Overhead loft', 'Cove lighting'],
     summary:
       'Floor-to-ceiling bedroom wardrobes with seamless overhead loft storage, warm matte beige shutters accented by slim wood vertical trims, long easy-grip handles, and calm ceiling cove lighting.',
     highlights: [
@@ -164,29 +203,147 @@ export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
       'Even door alignment with sturdy hinges that stay smooth for years',
       'Warm matte finish paired with slim solid-wood accent trims',
     ],
-    imageSrc: '/src/assets/images/mn_wardrobe_showcase_1795762706339.jpg',
-    imageAlt:
-      'Floor-to-ceiling bedroom wardrobe in matte beige with vertical wood trim accents, matching overhead loft storage, and warm ceiling cove light',
+    cover: {
+      photo: PHOTOS.wardrobe,
+      alt: 'Floor-to-ceiling bedroom wardrobe in matte beige with vertical wood trim accents, matching overhead loft storage, and warm ceiling cove light',
+      shot: SHOTS.wide,
+    },
+    gallery: placeholderFrames('Bedroom wardrobe', [SHOTS.angle, 'Open wardrobe interior', SHOTS.closeUp]),
     enquiryScope: 'Wardrobes & Bedrooms',
   },
   {
     id: 'commercial-shop',
     title: 'Modern Retail Shop & Display Interiors',
     category: 'Living & Shops',
-    area: 'Chennai Commercial Project',
+    area: 'Chennai',
+    propertyType: 'Retail shop',
+    scope: ['Billing counter', 'Display shelving', 'Lighting'],
     summary:
-      'Neat, welcoming commercial shop interior featuring a custom fluted-wood billing counter, illuminated built-in wall display shelves, clean ceiling spotlights, and organized floor layout.',
+      'Full commercial shop interior built for daily customer footfall: a custom fluted-wood billing counter, illuminated built-in wall display shelves, clean ceiling spotlights, and an organized floor layout.',
     highlights: [
       'Custom fluted-wood reception & billing counter built in-house',
       'Warm lit wall shelving designed for attractive product display',
       'Durable commercial finishing built for daily customer footfall',
     ],
-    imageSrc: '/src/assets/images/mn_shop_interior_showcase_1795762707427.jpg',
-    imageAlt:
-      'Clean modern retail shop interior in Chennai with custom fluted wood counter, backlit wooden display shelves, and recessed ceiling spotlights',
+    outcome: 'Delivered right on schedule',
+    cover: {
+      photo: PHOTOS.shop,
+      alt: 'Clean modern retail shop interior in Chennai with custom fluted wood counter, backlit wooden display shelves, and recessed ceiling spotlights',
+      shot: SHOTS.wide,
+    },
+    gallery: placeholderFrames('Retail shop', ['Billing counter close-up', 'Display shelving', 'Shop front']),
     enquiryScope: 'Shop / Commercial Interiors',
   },
+  {
+    id: 'family-home-kundrathur',
+    title: 'Complete Family Home Interiors',
+    category: 'Full Homes',
+    area: 'Kundrathur & Kavanur, Chennai',
+    propertyType: 'Independent house',
+    scope: ['Modular kitchen', 'Wardrobes', 'TV wall', 'Pooja unit'],
+    summary:
+      'Custom modular kitchen, bedroom wardrobes with loft storage, warm backlit living room TV unit with glass display shelves, and a decorative carved pooja mandapam.',
+    highlights: [
+      'One team for every room — kitchen to pooja unit',
+      'Loft storage planned across all bedrooms',
+      'Matching finishes carried through the whole home',
+    ],
+    outcome: 'Completed neatly as promised',
+    cover: { alt: 'Complete family home interior (photo coming soon)', shot: 'Living room wide shot' },
+    gallery: placeholderFrames('Family home', ['Kitchen wide shot', 'Master bedroom wardrobe', 'Pooja unit', 'TV wall']),
+    enquiryScope: 'Full Home Interiors',
+    featured: true,
+    placeholder: true,
+  },
+  {
+    id: 'practical-3bhk-porur',
+    title: 'Practical 3BHK Apartment',
+    category: 'Full Homes',
+    area: 'Porur & West Chennai',
+    propertyType: '3BHK apartment',
+    scope: ['Kitchen', '3 wardrobes', 'TV unit', 'Study'],
+    summary:
+      'Bright, practical interiors planned carefully around the family’s budget—with durable plywood cabinets, smooth matte finishes, and smart storage in every room.',
+    highlights: [
+      'Durable plywood cabinets throughout',
+      'Smooth matte finishes that are easy to clean',
+      'Smart storage planned room by room',
+    ],
+    outcome: '100% within agreed budget',
+    cover: { alt: '3BHK apartment interior (photo coming soon)', shot: 'Living & dining wide shot' },
+    gallery: placeholderFrames('3BHK apartment', ['Kitchen', 'Master bedroom', 'Kids’ room', 'Study corner']),
+    enquiryScope: 'Full Home Interiors',
+    placeholder: true,
+  },
+  {
+    id: 'placeholder-kitchen-2',
+    title: 'Parallel Kitchen with Tall Pantry',
+    category: 'Kitchens',
+    area: 'Chennai',
+    scope: ['Modular kitchen'],
+    summary: 'Project details and photos coming soon.',
+    highlights: [],
+    cover: { alt: 'Kitchen project (photo coming soon)', shot: SHOTS.wide },
+    gallery: placeholderFrames('Kitchen'),
+    enquiryScope: 'Modular Kitchen',
+    placeholder: true,
+  },
+  {
+    id: 'placeholder-wardrobe-2',
+    title: 'Sliding Wardrobe & Dresser',
+    category: 'Wardrobes',
+    area: 'Chennai',
+    scope: ['Wardrobes'],
+    summary: 'Project details and photos coming soon.',
+    highlights: [],
+    cover: { alt: 'Wardrobe project (photo coming soon)', shot: SHOTS.wide },
+    gallery: placeholderFrames('Wardrobe'),
+    enquiryScope: 'Wardrobes & Bedrooms',
+    placeholder: true,
+  },
+  {
+    id: 'placeholder-living-2',
+    title: 'Living Room Crockery & Shoe Unit',
+    category: 'Living & Shops',
+    area: 'Chennai',
+    scope: ['Living room storage'],
+    summary: 'Project details and photos coming soon.',
+    highlights: [],
+    cover: { alt: 'Living room project (photo coming soon)', shot: SHOTS.wide },
+    gallery: placeholderFrames('Living room'),
+    enquiryScope: 'Full Home Interiors',
+    placeholder: true,
+  },
+  {
+    id: 'placeholder-pooja-2',
+    title: 'Compact Wall-Mounted Pooja Unit',
+    category: 'Pooja & TV Units',
+    area: 'Chennai',
+    scope: ['Pooja unit'],
+    summary: 'Project details and photos coming soon.',
+    highlights: [],
+    cover: { alt: 'Pooja unit project (photo coming soon)', shot: SHOTS.wide },
+    gallery: placeholderFrames('Pooja unit'),
+    enquiryScope: 'Pooja Room / TV Unit',
+    placeholder: true,
+  },
+  {
+    id: 'placeholder-kitchen-3',
+    title: 'L-Shaped Kitchen with Breakfast Counter',
+    category: 'Kitchens',
+    area: 'Chennai',
+    scope: ['Modular kitchen'],
+    summary: 'Project details and photos coming soon.',
+    highlights: [],
+    cover: { alt: 'Kitchen project (photo coming soon)', shot: SHOTS.wide },
+    gallery: placeholderFrames('Kitchen'),
+    enquiryScope: 'Modular Kitchen',
+    placeholder: true,
+  },
 ];
+
+/** All frames of a project, cover first */
+export const projectFrames = (project: ShowcaseProject): ProjectImage[] => [project.cover, ...project.gallery];
 
 export const CONTACT_INFO = {
   companyName: 'MN Interiors',
@@ -215,15 +372,6 @@ export const MARQUEE_ITEMS: string[] = [
   'HOMES, KITCHENS, WARDROBES & SHOPS',
   'CALL OR WHATSAPP +91 98403 84824',
   'FREE SITE VISIT & QUOTE',
-];
-
-export const HERO_SUMMARY_ROWS: HeroStackRow[] = [
-  { label: 'Experience Across Chennai', value: '20+ YEARS' },
-  { label: 'Google Rating (71 Reviews)', value: '4.9 ★' },
-  { label: 'Office & Own Workshop', value: 'KUNDRATHUR' },
-  { label: 'Quality & Service Promise', value: '10-YR WARRANTY' },
-  { label: 'Call or WhatsApp Directly', value: '98403 84824', href: CONTACT_INFO.phoneHref },
-  { label: 'Site Visit & Estimate', value: 'FREE', highlight: true },
 ];
 
 export const STATS_BAND: StatItem[] = [
@@ -499,34 +647,6 @@ export const SIGNATURE_ROOMS: RoomScope[] = [
     title: 'TV Units, Living & Shop Interiors',
     body: 'TV feature walls with warm lighting, crockery cabinets, foyer shoe racks, false ceilings, complete home interiors, and neat, well-organized commercial shop interiors.',
     spec: 'RESIDENTIAL & COMMERCIAL',
-  },
-];
-
-export const CHENNAI_BENCHMARKS: ProjectBenchmark[] = [
-  {
-    location: 'KUNDRATHUR & KAVANUR',
-    title: 'COMPLETE FAMILY HOME INTERIORS',
-    meta: 'KITCHEN, WARDROBES, TV WALL & POOJA UNIT',
-    summary:
-      'Custom modular kitchen, bedroom wardrobes with loft storage, warm backlit living room TV unit with glass display shelves, and a decorative carved pooja mandapam.',
-    result: 'COMPLETED NEATLY AS PROMISED',
-    hot: true,
-  },
-  {
-    location: 'PORUR & WEST CHENNAI',
-    title: 'PRACTICAL 3BHK APARTMENT',
-    meta: 'FULL HOME INTERIORS · DESIGNED TO BUDGET',
-    summary:
-      'Bright, practical interior design planned carefully around the family’s budget—with durable plywood cabinets, smooth matte finishes, and smart storage in every room.',
-    result: '100% WITHIN AGREED BUDGET',
-  },
-  {
-    location: 'CHENNAI COMMERCIAL SPACE',
-    title: 'NEAT & ORGANIZED SHOP INTERIORS',
-    meta: 'CUSTOM DISPLAYS, COUNTERS & LIGHTING',
-    summary:
-      'Full commercial shop interior built for daily customer footfall—clean counters, organized shelving, attractive lighting, and durable finishing delivered right on schedule.',
-    result: 'RATED 5 ★ FOR WORKMANSHIP',
   },
 ];
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import {
   Armchair,
   BuildingOffice,
@@ -28,7 +28,6 @@ import { ProcessStepper } from './components/ProcessStepper';
 import { StickyBottomBar } from './components/StickyBottomBar';
 import { WorkShowcase } from './components/WorkShowcase';
 import {
-  CHENNAI_BENCHMARKS,
   COMPARISON_AFTER,
   COMPARISON_BEFORE,
   CONTACT_INFO,
@@ -44,7 +43,13 @@ import {
   type CraftPillar,
   type RoomScope,
 } from './data/content';
+import { useProjectRoute } from './lib/useProjectRoute';
 import { useScrollReveal } from './lib/useScrollReveal';
+
+// The project view (gallery, drawer) loads on first open — it isn't needed for the first screen.
+const ProjectViewer = lazy(() =>
+  import('./components/ProjectViewer').then((m) => ({ default: m.ProjectViewer })),
+);
 
 function PillarIcon({ icon }: { icon: CraftPillar['icon'] }) {
   switch (icon) {
@@ -82,6 +87,10 @@ export default function App() {
   const [enquiryNote, setEnquiryNote] = useState('');
 
   useScrollReveal();
+  const { projectId, openProject, closeProject } = useProjectRoute();
+  // Once loaded, keep the viewer mounted so its closing animation can play.
+  const [viewerLoaded, setViewerLoaded] = useState(Boolean(projectId));
+  if (projectId && !viewerLoaded) setViewerLoaded(true);
 
   const openEnquiry = () => {
     setEnquiryScope('Full Home Interiors');
@@ -103,7 +112,7 @@ export default function App() {
 
       <main>
         {/* BAND 1: DARK HERO + PINK MARQUEE TICKER */}
-        <Hero onOpenEnquiry={openEnquiry} />
+        <Hero onOpenEnquiry={openEnquiry} onOpenProject={openProject} />
 
         {/* BAND 2: WHITE 4-UP STATS STRIP */}
         <section className="w-full border-b border-[#E6E6E6] bg-white">
@@ -135,7 +144,7 @@ export default function App() {
         </section>
 
         {/* NEW BAND: MIST GRAY FILTERABLE BENTO WORK SHOWCASE + LIGHTBOX */}
-        <WorkShowcase onEnquireStyle={handleEnquireStyle} />
+        <WorkShowcase onOpenProject={openProject} onEnquireStyle={handleEnquireStyle} />
 
         {/* BAND 3: DARK PROBLEM VS SOLUTION + PULL-QUOTE */}
         <section className="band-section w-full bg-[#0A0A0A] text-white">
@@ -416,85 +425,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* BAND 8: MIST GRAY CHENNAI HOMES COMPLETED */}
-        <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
-          <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center" data-reveal>
-              <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                ACROSS CHENNAI
-              </p>
-              <h2 className="section-h2 text-[#0A0A0A]">
-                REAL PROJECTS.
-                <br />
-                <em>HAPPY CLIENTS.</em>
-              </h2>
-              <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                From independent houses around Kundrathur and Porur to apartments and shops across
-                Chennai, our work speaks for itself.
-              </p>
-            </div>
-
-            <div className="grid-3 mt-12" data-reveal-group>
-              {CHENNAI_BENCHMARKS.map((project) => {
-                const isHot = Boolean(project.hot);
-                return (
-                  <article
-                    key={project.title}
-                    className={`flex flex-col justify-between rounded-[16px] p-[28px] ${
-                      isHot
-                        ? 'bg-[#F31C60] text-white'
-                        : 'border border-[#E6E6E6] bg-white text-[#0A0A0A]'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.16em] uppercase">
-                        <MapPin
-                          size={14}
-                          weight="fill"
-                          className={isHot ? 'text-white' : 'text-[#D4104C]'}
-                          aria-hidden="true"
-                        />
-                        <span className={isHot ? 'text-white/90' : 'text-[#D4104C]'}>
-                          {project.location}
-                        </span>
-                      </div>
-
-                      <h3 className="font-display mt-3 text-[21px] leading-[1.2] font-black tracking-[-0.3px]">
-                        {project.title}
-                      </h3>
-
-                      <p
-                        className={`mt-2 text-[12px] font-semibold tracking-[0.12em] uppercase ${
-                          isHot ? 'text-white/80' : 'text-[#666666]'
-                        }`}
-                      >
-                        {project.meta}
-                      </p>
-
-                      <p
-                        className={`mt-4 text-[14.5px] leading-[1.65] ${
-                          isHot ? 'text-white/90' : 'text-[#666666]'
-                        }`}
-                      >
-                        {project.summary}
-                      </p>
-                    </div>
-
-                    <div
-                      className={`mt-6 rounded-[10px] px-4 py-3 text-[12.5px] font-bold tracking-[0.06em] uppercase ${
-                        isHot
-                          ? 'bg-black/20 text-white'
-                          : 'border border-[#E6E6E6] bg-[#F4F4F4] text-[#0A0A0A]'
-                      }`}
-                    >
-                      {project.result}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        {/* (Former BAND 8 'Real projects' case studies now live in the Our Work gallery) */}
 
         {/* BAND 9: DARK VERIFIED GOOGLE REVIEWS (FIRST CARD SOLID PINK) */}
         <section id="reviews" className="band-section w-full bg-[#0A0A0A] text-white">
@@ -977,6 +908,13 @@ export default function App() {
 
       {/* FIXED 68PX STICKY BOTTOM CTA BAR */}
       <StickyBottomBar onOpenEnquiry={openEnquiry} />
+
+      {/* PROJECT STORY VIEW (dialog on desktop, drawer on phones; URL #project=<id>) */}
+      {viewerLoaded && (
+        <Suspense fallback={null}>
+          <ProjectViewer projectId={projectId} onClose={closeProject} onEnquire={handleEnquireStyle} />
+        </Suspense>
+      )}
 
       {/* INTERACTIVE FREE ENQUIRY MODAL */}
       <BookingModal

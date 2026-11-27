@@ -1,6 +1,6 @@
 # Showcase Overhaul — giving the work the weight it deserves
 
-- **Status**: PLAN (nothing built yet)
+- **Status**: Phase 1 DONE (A, B, C, D, E, L) · Phase 2–3 TODO
 - **Branch**: `showcase-test`
 - **Written against commit**: bd3fc70
 - **Approach**: Emil Kowalski's design-engineering philosophy — let the work carry the page, keep motion
