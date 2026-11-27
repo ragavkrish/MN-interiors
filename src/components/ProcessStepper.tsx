@@ -1,24 +1,43 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { PROCESS_STAGES } from '../data/content';
 
 export function ProcessStepper() {
   const [activeIndex, setActiveIndex] = useState(0);
+  // 1 = moving forward (content enters from the right), -1 = moving back
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const reduceMotion = useReducedMotion();
   const current = PROCESS_STAGES[activeIndex];
 
+  // --ease-out from index.css
+  const easeOut = [0.23, 1, 0.32, 1] as const;
+  const contentEnter = {
+    initial: reduceMotion
+      ? { opacity: 0, transform: 'translateX(0px)' }
+      : { opacity: 0, transform: `translateX(${8 * direction}px)` },
+    animate: { opacity: 1, transform: 'translateX(0px)' },
+    transition: { duration: 0.2, ease: easeOut },
+  };
+
+  const goTo = (index: number, dir: 1 | -1) => {
+    setDirection(dir);
+    setActiveIndex(index);
+  };
+
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev === 0 ? PROCESS_STAGES.length - 1 : prev - 1));
+    goTo(activeIndex === 0 ? PROCESS_STAGES.length - 1 : activeIndex - 1, -1);
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev === PROCESS_STAGES.length - 1 ? 0 : prev + 1));
+    goTo(activeIndex === PROCESS_STAGES.length - 1 ? 0 : activeIndex + 1, 1);
   };
 
   return (
     <section id="how-we-work" className="band-section w-full bg-[#0A0A0A] text-white">
       <div className="container-main">
         {/* Centered section intro */}
-        <div className="mx-auto max-w-[740px] text-center">
+        <div className="mx-auto max-w-[740px] text-center" data-reveal>
           <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
             SIMPLE &amp; STRESS-FREE PROCESS
           </p>
@@ -49,7 +68,7 @@ export function ProcessStepper() {
                 aria-selected={isActive}
                 aria-controls={`stage-panel-${stage.num}`}
                 id={`stage-tab-${stage.num}`}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => goTo(index, index >= activeIndex ? 1 : -1)}
                 className={`relative flex shrink-0 cursor-pointer items-center gap-2.5 px-5 py-4 text-[14.5px] font-semibold whitespace-nowrap transition-colors duration-150 ${
                   isActive ? 'text-white' : 'text-white/55 hover:text-white/85'
                 }`}
@@ -59,9 +78,11 @@ export function ProcessStepper() {
                 </span>
                 <span>{stage.tabLabel}</span>
                 {isActive && (
-                  <span
+                  <motion.span
+                    layoutId="process-tab-underline"
                     className="absolute inset-x-0 bottom-0 h-[2px] bg-[#F31C60]"
                     aria-hidden="true"
+                    transition={{ duration: reduceMotion ? 0 : 0.25, ease: easeOut }}
                   />
                 )}
               </button>
@@ -78,7 +99,7 @@ export function ProcessStepper() {
         >
           <div className="grid-panel">
             {/* Left Side: Title, Description, Pink-Tint Outcome Callout */}
-            <div>
+            <motion.div key={`copy-${activeIndex}`} {...contentEnter}>
               <p className="text-[11px] font-semibold tracking-[0.18em] text-[#F31C60] uppercase">
                 STEP {current.num} OF 06
               </p>
@@ -98,11 +119,11 @@ export function ProcessStepper() {
                   {current.outcomeText}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Side: 3 Stat Chips + 2-Column Checklist */}
             <div className="flex h-full flex-col justify-between gap-6">
-              <div>
+              <motion.div key={`detail-${activeIndex}`} {...contentEnter}>
                 {/* 3 Stat Chips in Ink 3 */}
                 <div className="grid grid-cols-3 gap-2.5 max-[680px]:grid-cols-1">
                   {current.stats.map((stat) => (
@@ -134,7 +155,7 @@ export function ProcessStepper() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Prev / Next Controls Bottom-Right */}
               <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-5 max-[680px]:flex-col max-[680px]:items-stretch">
