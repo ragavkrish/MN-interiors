@@ -1,0 +1,8 @@
+{
+  "name": "Kalaigar Interiors — Chennai",
+  "description": "Bespoke residential interiors and master joinery crafted in Chennai since 2004. Over 22 years of in-house carpentry, Burma teak millwork, and 15-year guaranteed craftsmanship.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
