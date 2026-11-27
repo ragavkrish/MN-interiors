@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "health_score": 53,
+    "business_type": "Local service business (hybrid: workshop/office in Kundrathur + service-area across Chennai) — residential & commercial interiors",
+    "audit_scope": "Pre-launch: local production build (vite build + vite preview) of the single-page site. Intended domain mninterior.in did not resolve via DNS on 2026-11-27. Live-only checks (hosting headers, redirects, real-user CWV, GSC, backlinks, GBP/NAP citations) not run.",
+    "top_findings": [
+      "Raw HTML is an empty JS shell (0 characters of text without JavaScript) — AI crawlers and link previews see nothing",
+      "No structured data at all (no LocalBusiness/HomeAndConstructionBusiness, FAQPage, Organization)",
+      "No robots.txt, sitemap.xml, canonical tag or favicon; missing files fall back to the homepage HTML (soft 404s)",
+      "Showcase photos appear to be AI-generated renders presented as 'Real projects' — trust/E-E-A-T and policy risk",
+      "3.9 MB of unoptimised JPEGs (~0.8 MB each) with no width/height, no WebP/AVIF, no og:image"
+    ],
+    "quick_wins": [
+      "Add LocalBusiness + FAQPage JSON-LD to index.html (static, no JS needed)",
+      "Add public/robots.txt, public/sitemap.xml, <link rel=canonical>, og:url, og:image, favicon",
+      "Compress showcase images to WebP ~1200px (~100-150 KB each) and add width/height",
+      "Delete/rewrite stale metadata.json ('Kalaigar Interiors', 22 years, 15-yr guarantee)",
+      "Remove unused @google/genai, express, lucide-react dependencies"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO", "score": 45,
+      "what_works": ["HTTPS-ready static build", "lang=en set", "viewport meta present", "No horizontal scroll on mobile", "Single clean URL, in-page anchors for sections"],
+      "findings": [
+        {"title": "Client-side-only rendering: empty HTML shell", "severity": "Critical", "description": "With JavaScript disabled the page body contains 0 characters; all 2,395 words, headings, NAP and FAQs are injected by a 504 KB React bundle. Google renders JS (deferred), but GPTBot, ClaudeBot, PerplexityBot, Bing's first pass, WhatsApp/Facebook link previews do not.", "recommendation": "Pre-render the page at build time (e.g. vite-plugin-prerender / react-dom/server renderToString in a small build script, or move to Astro/Next static export) so dist/index.html ships the full HTML; hydrate on top."},
+        {"title": "No robots.txt or sitemap.xml", "severity": "High", "description": "Neither file exists in public/. On the preview server /robots.txt and /sitemap.xml return 200 with the homepage HTML (SPA fallback) — crawlers get an invalid robots file and soft 404s.", "recommendation": "Add public/robots.txt (Allow all + Sitemap: https://mninterior.in/sitemap.xml) and public/sitemap.xml listing https://mninterior.in/. Configure host to return real 404s for unknown paths."},
+        {"title": "No canonical, og:url or www/apex decision", "severity": "High", "description": "No <link rel=canonical>. Hosting will likely serve both www and apex plus any Cloud Run *.run.app URL — duplicate hosts.", "recommendation": "Add <link rel=\"canonical\" href=\"https://mninterior.in/\"> and og:url; 301 www→apex and block/redirect the *.run.app host."},
+        {"title": "No favicon / apple-touch-icon", "severity": "Medium", "description": "No icon link; Google shows favicons next to mobile results.", "recommendation": "Add a 48x48-multiple favicon (SVG + PNG) and apple-touch-icon."},
+        {"title": "Images served from /src/assets path via copy plugin", "severity": "Low", "description": "Images bypass Vite's asset pipeline (no hashing/compression), served from /src/assets/images/... with long timestamp filenames.", "recommendation": "Import images or move to public/images with descriptive names (modular-kitchen-kundrathur-chennai.webp)."},
+        {"title": "Security headers unverified", "severity": "Info", "description": "Cannot test HSTS, CSP, X-Content-Type-Options etc. until hosted.", "recommendation": "Re-run audit against the live URL after launch."}
+      ]
+    },
+    {
+      "name": "Content Quality", "score": 70,
+      "what_works": ["2,395 words of specific, locally-relevant copy (Kundrathur, Kavanur, Porur, Anna Nagar, Chennai humidity/monsoons)", "Concrete service details: plywood, soft-close, loft, pooja units", "Real-looking Google review quotes with names", "6 FAQs answering real buyer questions", "Clear process (6 steps), warranty terms, address & hours"],
+      "findings": [
+        {"title": "Showcase images look AI-generated but are labelled 'Real projects'", "severity": "High", "description": "The five showcase images come from an image-generation pipeline (vite.config comment 'generate_image output', timestamped filenames) yet sit under 'REAL PROJECTS. HAPPY CLIENTS.' with specific localities (Porur, Anna Nagar). For an interiors business, portfolio authenticity is the core trust signal; misleading visuals hurt E-E-A-T and conversions and can conflict with Google's misrepresentation policies for ads/GBP.", "recommendation": "Replace with real site photos (even phone photos) of completed jobs; until then label them 'Design concept' and remove locality claims."},
+        {"title": "Thin authorship / Experience signals", "severity": "Medium", "description": "No founder/owner name, team photo, workshop photo, year established, GST/registration, or link to the Google Business Profile reviews page.", "recommendation": "Add an About block: owner name + photo, founding year, workshop photo, GBP review link, social profiles."},
+        {"title": "Stale conflicting metadata.json", "severity": "Medium", "description": "metadata.json says 'Kalaigar Interiors — since 2004, 22 years, Burma teak, 15-year guarantee' — contradicts site (MN Interiors, 20+ years, 10-year warranty). If served it is a contradictory entity signal.", "recommendation": "Update or delete metadata.json (it is AI-Studio scaffolding)."},
+        {"title": "Unverifiable stat claims", "severity": "Low", "description": "'100% within agreed budget', 'Rated 5 ★ for workmanship' on anonymised projects.", "recommendation": "Tie each benchmark to a named review or real photo set."}
+      ]
+    },
+    {
+      "name": "On-Page SEO", "score": 62,
+      "what_works": ["Title 68 chars with brand + service + location", "Meta description 150 chars, location + USP", "Exactly one H1; logical H2/H3 hierarchy", "Descriptive section IDs"],
+      "findings": [
+        {"title": "Single page targets every service and locality", "severity": "High", "description": "One URL tries to rank for modular kitchens, wardrobes, pooja rooms, TV units, shop interiors and 9 locality clusters. Competing Chennai interior sites rank with dedicated service and area pages.", "recommendation": "Post-launch add /modular-kitchen-chennai, /wardrobes-chennai, /pooja-room-designs-chennai, /commercial-shop-interiors-chennai and 3-5 genuine area pages (Kundrathur, Porur, Tambaram...) with unique photos/projects."},
+        {"title": "H1 and title missing the primary search phrase", "severity": "Medium", "description": "H1 is a slogan ('20+ years of Chennai interiors. Crafted to last every day.'). People search 'interior designers in Kundrathur', 'home interiors Chennai', 'modular kitchen Kundrathur'.", "recommendation": "Title: 'MN Interiors | Interior Designers & Modular Kitchens in Kundrathur, Chennai'. Keep the slogan visually but add a keyword line inside the H1 or the pill above it."},
+        {"title": "No navigation menu", "severity": "Low", "description": "Header has no links (by design). Section anchors exist only further down.", "recommendation": "Fine for a one-pager; once service pages exist, add a nav."},
+        {"title": "No outbound authority links", "severity": "Low", "description": "Only tel:, wa.me and a Google Maps search link. No link to the actual GBP listing or socials.", "recommendation": "Link the real GBP place URL (from Share on Maps) and Instagram/Facebook/YouTube if they exist."}
+      ]
+    },
+    {
+      "name": "Schema / Structured Data", "score": 10,
+      "what_works": ["Content needed for schema (NAP, hours, FAQs, services) already exists in src/data/content.ts"],
+      "findings": [
+        {"title": "No JSON-LD at all", "severity": "High", "description": "Zero structured data blocks found after render.", "recommendation": "Add static JSON-LD in index.html: HomeAndConstructionBusiness (name, address 600089, geo, telephone, openingHours, url, image, priceRange, areaServed Chennai, sameAs GBP/socials), WebSite, and FAQPage mirroring the 6 FAQs."},
+        {"title": "Don't add self-serving AggregateRating", "severity": "Info", "description": "Google ignores review stars a LocalBusiness puts on its own site, and marking up the 4.9/71 Google rating there can be treated as a policy violation.", "recommendation": "Omit aggregateRating/review; let the GBP carry stars."}
+      ]
+    },
+    {
+      "name": "Performance (CWV)", "score": 70,
+      "what_works": ["Desktop lab: FCP 0.28 s, LCP 0.64 s, CLS 0.0005", "Mobile (4x CPU, ~1.6 Mbps, 150 ms RTT): FCP 1.42 s, LCP 1.85 s (text element), CLS 0.068", "Images lazy-loaded", "fonts display=swap with preconnect"],
+      "findings": [
+        {"title": "504 KB JS bundle (149 KB gzip) gates all content", "severity": "Medium", "description": "Because the page is client-rendered, nothing paints until the full bundle downloads and executes. Vite warns the chunk exceeds 500 KB. Real-world Indian 4G + local server latency will push LCP higher than lab.", "recommendation": "Pre-rendering fixes the critical path. Also split BookingModal/WorkShowcase via lazy(), and check phosphor icon imports tree-shake."},
+        {"title": "Mobile CLS 0.068", "severity": "Low", "description": "Under the 0.1 threshold but close; images lack width/height and fonts swap.", "recommendation": "Add width/height (or aspect-ratio) to images; consider size-adjust fallback fonts."},
+        {"title": "Unused heavy dependencies", "severity": "Low", "description": "@google/genai, express, lucide-react, dotenv are in dependencies but not imported by src.", "recommendation": "Remove from package.json."},
+        {"title": "Field data unavailable", "severity": "Info", "description": "No CrUX data pre-launch.", "recommendation": "Check PageSpeed Insights / Search Console CWV 28 days after launch."}
+      ]
+    },
+    {
+      "name": "AI Search Readiness", "score": 30,
+      "what_works": ["FAQ answers are self-contained and quotable", "Explicit facts: address, phone, hours, warranty, years, service area"],
+      "findings": [
+        {"title": "AI crawlers see an empty page", "severity": "Critical", "description": "GPTBot, ClaudeBot, PerplexityBot and most agent fetchers don't run JS — they would index only the <title> and meta description.", "recommendation": "Pre-render (same fix as Technical)."},
+        {"title": "No entity corroboration", "severity": "Medium", "description": "No sameAs links, no Organization schema, no About/owner info for AI engines to resolve the entity 'MN Interiors Kundrathur'.", "recommendation": "Schema with sameAs + consistent NAP on GBP, JustDial, Sulekha, IndiaMART, Houzz."},
+        {"title": "No robots.txt AI policy / llms.txt", "severity": "Low", "description": "Optional; llms.txt is not used by Google.", "recommendation": "robots.txt allowing all is sufficient; llms.txt optional."}
+      ]
+    },
+    {
+      "name": "Images", "score": 50,
+      "what_works": ["All 5 images have descriptive, keyword-relevant alt text", "loading=lazy on all"],
+      "findings": [
+        {"title": "3.9 MB of JPEGs", "severity": "High", "description": "Each showcase image is 680-836 KB at 1200-1376 px, displayed at 362-746 px.", "recommendation": "Export WebP/AVIF at 800 and 1400 px with srcset; target <150 KB each."},
+        {"title": "No og:image / social preview", "severity": "High", "description": "Links shared on WhatsApp (your main channel) show no preview image.", "recommendation": "Add 1200x630 og:image + twitter:image (a real kitchen photo with logo)."},
+        {"title": "No width/height attributes", "severity": "Medium", "description": "Contributes to layout shift.", "recommendation": "Add intrinsic width/height."},
+        {"title": "Non-descriptive filenames", "severity": "Low", "description": "mn_kitchen_showcase_1795762703455.jpg", "recommendation": "modular-kitchen-kundrathur-chennai.webp etc."}
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {"name": "Phase 1: Critical Fixes (before launch)", "timeframe": "Week 1", "items": ["Pre-render the homepage to static HTML", "Add robots.txt, sitemap.xml, canonical, og:url", "Add HomeAndConstructionBusiness + WebSite + FAQPage JSON-LD", "Replace or relabel AI-generated 'real project' images", "Fix/delete metadata.json"]},
+      {"name": "Phase 2: High-Impact Improvements", "timeframe": "Weeks 2-3", "items": ["Compress images to WebP with srcset + width/height", "Add og:image and favicon", "Keyword-align title/H1", "Link real GBP listing; set up Search Console + Bing Webmaster, submit sitemap", "301 www→apex and run.app→domain; real 404s", "Remove unused deps, lazy-load modal"]},
+      {"name": "Phase 3: Content & Authority", "timeframe": "Month 2", "items": ["Service pages (kitchens, wardrobes, pooja, TV units, shop interiors)", "3-5 genuine area pages with real local projects", "About section with owner + workshop photos", "Citations with identical NAP: JustDial, Sulekha, IndiaMART, Houzz, Facebook, Instagram", "Ask happy clients for Google reviews mentioning service + area"]},
+      {"name": "Phase 4: Monitoring & Iteration", "timeframe": "Ongoing", "items": ["Re-run this audit against live mninterior.in (headers, redirects, CWV field data)", "Monitor GSC queries/indexing monthly", "Add new project photos monthly"]}
+    ]
+  },
+  "artifacts": {"findings_dir": "findings/", "screenshots_dir": "screenshots/"}
+}
