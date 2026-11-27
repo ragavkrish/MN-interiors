@@ -222,8 +222,6 @@ export const HERO_SUMMARY_ROWS: HeroStackRow[] = [
   { label: 'Google Rating (71 Reviews)', value: '4.9 ★' },
   { label: 'Office & Own Workshop', value: 'KUNDRATHUR' },
   { label: 'Quality & Service Promise', value: '10-YR WARRANTY' },
-  { label: 'Call or WhatsApp Directly', value: '98403 84824', href: CONTACT_INFO.phoneHref },
-  { label: 'Site Visit & Estimate', value: 'FREE', highlight: true },
 ];
 
 export const STATS_BAND: StatItem[] = [

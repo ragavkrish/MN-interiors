@@ -34,8 +34,11 @@
     background-color: var(--white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    padding-bottom: 76px;
     overflow-x: hidden;
+  }
+
+  section[id] {
+    scroll-margin-top: 84px;
   }
 
   a:focus-visible,
@@ -293,6 +296,27 @@
   transform: rotate(45deg);
 }
 
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.faq-item[open] .faq-answer {
+  animation: faq-open 220ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item[open] .faq-answer {
+    animation: none;
+  }
+}
+
 /* Live status dot halo */
 .live-dot {
   width: 8px;
@@ -301,11 +325,6 @@
   background-color: var(--live);
   box-shadow: 0 0 0 4px rgba(47, 212, 122, 0.18);
   flex-shrink: 0;
-}
-
-/* Sticky bottom bar upward shadow (the only shadow on the page) */
-.sticky-bottom-shadow {
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
 }
 
 /* Responsive asymmetric grid splits */

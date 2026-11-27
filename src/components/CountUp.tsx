@@ -79,7 +79,8 @@ export default function CountUp({
   const finalText = `${to.toFixed(decimals)}${suffix}${finalSuffix}`;
 
   return (
-    <span ref={ref} aria-label={finalText} role="text">
+    <span ref={ref}>
+      <span className="sr-only">{finalText}</span>
       <span aria-hidden="true">
         {value.toFixed(decimals)}
         {suffix}

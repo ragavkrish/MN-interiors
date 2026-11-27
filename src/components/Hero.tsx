@@ -97,7 +97,7 @@ export function Hero({ onOpenEnquiry }: HeroProps) {
 
           {/* Right Column: Ink 2 Summary Card */}
           <div
-            className="hero-enter-rise rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]"
+            className="hero-enter-rise min-[1001px]:self-center rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]"
             style={
               {
                 animationDelay: '450ms',

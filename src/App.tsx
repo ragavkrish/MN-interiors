@@ -25,7 +25,6 @@ import CountUp from './components/CountUp';
 import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ProcessStepper } from './components/ProcessStepper';
-import { StickyBottomBar } from './components/StickyBottomBar';
 import { WorkShowcase } from './components/WorkShowcase';
 import {
   CHENNAI_BENCHMARKS,
@@ -788,7 +787,7 @@ export default function App() {
                       <Plus size={16} weight="bold" />
                     </span>
                   </summary>
-                  <div className="pb-[24px] pr-10 text-[16px] leading-[1.7] text-[#666666] max-[680px]:pr-0">
+                  <div className="faq-answer pb-[24px] pr-10 text-[16px] leading-[1.7] text-[#666666] max-[680px]:pr-0">
                     {faq.answer}
                   </div>
                 </details>
@@ -974,9 +973,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-
-      {/* FIXED 68PX STICKY BOTTOM CTA BAR */}
-      <StickyBottomBar onOpenEnquiry={openEnquiry} />
 
       {/* INTERACTIVE FREE ENQUIRY MODAL */}
       <BookingModal

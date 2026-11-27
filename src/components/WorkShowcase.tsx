@@ -193,15 +193,23 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
                   setActiveCategory(category);
                   setLightboxId(null);
                 }}
-                className={`inline-flex min-h-[44px] shrink-0 cursor-pointer items-center gap-2 rounded-[10px] px-4 py-2.5 text-[14px] font-bold whitespace-nowrap transition-colors duration-150 ${
+                className={`relative inline-flex min-h-[44px] shrink-0 cursor-pointer items-center gap-2 overflow-hidden rounded-[10px] px-4 py-2.5 text-[14px] font-bold whitespace-nowrap transition-colors duration-150 active:scale-[0.97] motion-reduce:active:scale-100 ${
                   isSelected
-                    ? 'bg-[#F31C60] text-white'
+                    ? 'text-white'
                     : 'border border-[#E6E6E6] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]'
                 }`}
               >
-                <span>{category}</span>
+                {isSelected && (
+                  <motion.span
+                    layoutId="showcase-filter-active"
+                    className="absolute inset-0 rounded-[10px] bg-[#F31C60]"
+                    aria-hidden="true"
+                    transition={{ duration: reduceMotion ? 0 : 0.24, ease: easeOut }}
+                  />
+                )}
+                <span className="relative z-10">{category}</span>
                 <span
-                  className={`font-display text-[12px] font-extrabold tabular-nums ${
+                  className={`font-display relative z-10 text-[12px] font-extrabold tabular-nums ${
                     isSelected ? 'text-white/85' : 'text-[#666666]'
                   }`}
                 >
