@@ -15,7 +15,7 @@ Each task lists which audits it satisfies. Where two audits asked for the same t
 | # | Decision | Why it blocks |
 | --- | --- | --- |
 | 1 | **Correct PIN code** — 600069 (Kundrathur) or 600089? | NAP must be exact on site, schema, GBP and every directory |
-| 2 | ~~Domain~~ — **resolved: mninteriors.org** (footer still says mninterior.in → fix in 1.7) | — |
+| 2 | ~~Domain~~ — **resolved: mninteriors.org** (footer still says mninterior.in → fixed in 0.4) | — |
 | 3 | **Google Business Profile** — do you have access to the profile with the 71 reviews? | Map pack is the #1 traffic source for this business |
 | 4 | **Real photos** — when can you shoot 8–12 finished projects? | Project pages, service pages, area pages and E-E-A-T all depend on them |
 | 5 | **Price ranges** you're comfortable publishing (kitchen per sq ft, 2BHK/3BHK) | Cost guide + FAQ |
