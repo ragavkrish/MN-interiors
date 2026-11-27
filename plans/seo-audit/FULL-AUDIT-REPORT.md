@@ -1,20 +1,39 @@
 # SEO Audit — MN Interiors (Kundrathur, Chennai)
 
-- **Audited**: `main` @ 918101d (React + Vite single-page site), built and served locally
+- **Live site**: https://mninteriors.org (Cloudflare) — serves the same build as `main` @ 918101d (React + Vite single-page site)
 - **Date**: 2026-11-27
 - **Business type detected**: Local service business, hybrid (workshop/showroom visits + service-area work across Chennai) — interior design & carpentry/joinery
-- **Method**: code + build inspection, Playwright rendering (desktop, throttled mid-range Android), live web searches for the brand, domain and local keywords
-- **Not measured (and why)**: the site is **not deployed** — `mninterior.in` (the domain in the footer) has no indexed pages. Live rankings, Search Console data, Core Web Vitals field data and backlink metrics therefore don't exist yet; no DataForSEO/Moz/Google API credentials are configured either. Every finding below is from evidence gathered here; anything unverified is labelled **VERIFY**.
+- **Method**: live HTTP checks + Playwright rendering of mninteriors.org (desktop, throttled mid-range Android), code/build inspection, web searches for the brand, domain and local keywords
+- **Not measured (and why)**: Google has **not indexed any page** of mninteriors.org yet (`site:` search returns nothing), and no Search Console / DataForSEO / Moz credentials are connected — so rankings, impressions, CrUX field data and backlink metrics aren't available. Anything unverified is labelled **VERIFY**.
+
+## Live-site findings (mninteriors.org)
+
+| Check | Result | Severity |
+| --- | --- | --- |
+| `https://mninteriors.org/` | 200, Cloudflare, `cache-control: max-age=0` | OK |
+| HTML crawlers receive | `<body><div id="root"></div></body>` — empty until JavaScript runs | **Critical** |
+| Indexed pages | none (`site:mninteriors.org` → 0 results) | **Critical** |
+| `https://www.mninteriors.org/` | **522** (Cloudflare can't reach origin) — broken, not redirected | **High** |
+| `/robots.txt` | returns the **homepage HTML** (200, text/html) — no real robots file | **High** |
+| `/sitemap.xml` | returns the **homepage HTML** — no sitemap; Search Console will reject it | **High** |
+| Any unknown URL (e.g. `/this-page-does-not-exist-123`) | **200 + identical homepage** (soft 404 → unlimited duplicate URLs) | **High** |
+| `/assets/aistudio/DESIGN-nextgenx_2bebd466.md` | **200, publicly readable** private design-reference doc | **High** |
+| Footer domain | says **`mninterior.in`** — not the live domain | High |
+| PIN on page | **600089** (×6) — Kundrathur is commonly 600069 (**VERIFY**) | High |
+| Canonical / JSON-LD / og:image | none | High |
+| Speed (throttled mid-range Android) | FCP 1.94 s, LCP 2.36 s, CLS 0 | OK |
+| Photos | 5 JPEGs ≈ 800 KB each served at full size to phones | Medium |
+| `http://` → `https://` redirect | could not be verified from this environment (**VERIFY** in Cloudflare: "Always Use HTTPS" on) | — |
 
 ---
 
 ## Executive summary
 
-**SEO Health Score: 40 / 100** (pre-launch)
+**SEO Health Score: 38 / 100** (live, not yet indexed)
 
 | Category | Weight | Score | Main reason |
 | --- | --- | --- | --- |
-| Technical SEO | 22% | 35 | Content is JavaScript-only; no robots.txt, sitemap, canonical, favicon; private design files would be published |
+| Technical SEO | 22% | 30 | Content is JavaScript-only; robots.txt/sitemap/404s all return the homepage; www broken; private design doc public |
 | Content quality | 23% | 50 | Strong local copy, but heavy repetition, no real people/photos, unverifiable claims |
 | On-page SEO | 20% | 45 | Decent title/description; **one URL only**, no keyword-targeted pages, anchors instead of pages |
 | Schema / structured data | 10% | 0 | None |
@@ -25,7 +44,7 @@
 **The one-sentence verdict:** the site is a single, well-written landing page — but to search engines it is *one empty URL* about a business whose name already belongs to firms in Indore and on IndiaMART. It can't rank for anything competitive until it (1) is deployed and pre-rendered, (2) becomes multiple pages that each target a service or area, and (3) is tied to a verified Google Business Profile.
 
 ### Top 5 critical issues
-1. **Not live / not indexed.** No page from `mninterior.in` is in search results. Nothing else matters until the site is deployed on its domain and submitted to Google Search Console.
+1. **Live but not indexed.** mninteriors.org is up, but Google has no pages from it, and the site tells crawlers nothing useful: no robots.txt, no sitemap (both return the homepage), every made-up URL returns the homepage, and `www.` is broken (522). Verify the domain in Google Search Console and fix these before submitting.
 2. **Empty HTML for crawlers.** The served HTML body is `<div id="root"></div>`; all 2,376 words appear only after JavaScript runs. Google can usually render it (slowly), but Bing, WhatsApp/Facebook link previews and AI assistants (ChatGPT, Perplexity) mostly see nothing.
 3. **Only one page.** Anchors like `#services` are not pages. Competitors rank with a page per service *and* per locality (e.g. HomeLane `/interior-designers-chennai/porur`, `/tambaram`; Cibi+Simeon `/pallavaram`). MN has nothing to rank for "modular kitchen Porur" or "interior designers Pallavaram".
 4. **No structured data + brand-name collision.** Search results for "MN Interiors" return an Indore studio (Houzz) and IndiaMART sellers named "M N Interior". Without `LocalBusiness` schema, consistent NAP and a Google Business Profile, Google can't tell which "MN Interiors" this is.
@@ -34,7 +53,7 @@
 ### Top 5 quick wins
 1. Add `robots.txt`, `sitemap.xml`, canonical tag, favicon, `og:image` (≈1 hour).
 2. Add `LocalBusiness` (`HomeAndConstructionBusiness`) JSON-LD with address, geo, hours, phone, `sameAs` (≈1 hour).
-3. Remove `public/assets/aistudio/` before launch — it would publish a 2.9 MB PNG and the private design-reference document at public URLs.
+3. Remove `public/assets/aistudio/` **now** — the private design-reference document is publicly readable at mninteriors.org/assets/aistudio/DESIGN-nextgenx_2bebd466.md (plus 3.4 MB of unused images).
 4. Compress the 5 showcase photos to WebP/AVIF at 3 sizes (3.8 MB → ~0.5 MB), add width/height.
 5. Claim/verify the Google Business Profile and make its name, address, phone and hours match the site exactly.
 
@@ -44,16 +63,19 @@
 
 | Finding | Severity | Evidence | Fix |
 | --- | --- | --- | --- |
-| Site not deployed; domain has no indexed pages | **Critical** | Web search for `mninterior.in` returns no pages from the domain | Deploy (Vercel/Netlify/Cloudflare Pages), connect domain, verify in Google Search Console + Bing Webmaster Tools |
+| Domain live but no indexed pages | **Critical** | `site:mninteriors.org` returns nothing | Verify mninteriors.org in Google Search Console + Bing Webmaster Tools; submit sitemap once it exists |
+| SPA fallback serves the homepage for every path | **High** | `/robots.txt`, `/sitemap.xml`, `/anything` → 200 + homepage HTML | Real files for robots/sitemap; a real 404 page with 404 status (Cloudflare Pages: add `404.html`; with pre-rendered routes the catch-all goes away) |
+| `www.mninteriors.org` returns 522 | **High** | Cloudflare origin error | Add a Cloudflare redirect rule www → apex (301), or point www at the same project |
+| Footer shows wrong domain `mninterior.in` | High | rendered footer | Change to mninteriors.org (and use it in canonical/schema/GBP) |
 | Client-side rendering only | **Critical** | `dist/index.html` body = `<div id="root"></div>` | Pre-render every route to static HTML at build time (e.g. `vite-react-ssg`, or move to Astro/Next static export). Required anyway for multi-page (§3) |
-| No `robots.txt` | High | not in `public/` or `dist/` | Add `public/robots.txt` allowing all + `Sitemap:` line |
-| No `sitemap.xml` | High | missing | Generate at build from the route list |
+| No `robots.txt` | High | not in `public/`; live URL returns homepage HTML | Add `public/robots.txt` allowing all + `Sitemap:` line |
+| No `sitemap.xml` | High | live URL returns homepage HTML | Generate at build from the route list |
 | No canonical tag | High | 0 in `index.html` | `<link rel="canonical">` per page (absolute URL, chosen www/non-www) |
-| Private files would be published | High | `public/assets/aistudio/` = 2.9 MB PNG + 2 PNGs + `DESIGN-nextgenx_*.md` (internal design doc), all unused by the site | Delete the folder (or move out of `public/`) |
+| Private files are published | High | live: `/assets/aistudio/DESIGN-nextgenx_2bebd466.md` returns 200 (internal design doc) + 3.4 MB unused PNGs | Delete the folder (or move out of `public/`) |
 | Raw images shipped twice | Medium | build copies `src/assets` into `dist/src/assets` via a custom plugin; images referenced as `/src/assets/...` strings | Import images through Vite (hashed, cacheable), drop the copy plugin |
 | No favicon / apple-touch-icon / manifest | Medium | none in build | Add favicon set; shows in Google mobile results |
 | Hash-only navigation | Medium | nav links `#our-work`, `#services`… | Keep anchors for in-page scrolling, but services/projects/areas need real URLs (§3) |
-| No 404 page / redirects plan | Low | SPA | Static 404 page; redirect `www` ↔ apex, HTTP → HTTPS at host |
+| HTTP → HTTPS | Low | not verifiable here | Enable Cloudflare "Always Use HTTPS" |
 | `lang="en"` only | Low | `<html lang="en">` | Fine for now; use `en-IN`. A Tamil version is a later opportunity (§3) |
 
 ## 2. Content quality & E-E-A-T — 50/100
@@ -127,7 +149,7 @@ Nothing present. Add (as JSON-LD, generated from `content.ts` so it never drifts
 
 ## 5. Performance — 70/100
 
-Measured locally on a throttled mid-range Android profile (≈1.6 Mbps, 150 ms latency, 4× CPU): **FCP 1.55 s, LCP 2.14 s, CLS 0** — good. Field data (CrUX) doesn't exist until launch.
+Measured on the **live site** with a throttled mid-range Android profile (≈1.6 Mbps, 150 ms latency, 4× CPU): **FCP 1.94 s, LCP 2.36 s, CLS 0** — good (locally: 1.55 s / 2.14 s). Field data (CrUX) doesn't exist until launch.
 
 | Finding | Severity | Fix |
 | --- | --- | --- |
@@ -150,8 +172,8 @@ Alt text is excellent (130–140 descriptive characters each). Problems: filenam
 
 ## 8. Local SEO & backlinks
 
-### Do we have enough backlinks? Zero — and they can't be measured until launch
-The domain has no indexed pages and no backlink data source is connected (Moz/Bing/DataForSEO). For a local trades business, **links matter less than the Google Business Profile, reviews and citations**. Priorities:
+### Do we have enough backlinks? Effectively zero
+mninteriors.org has no indexed pages and no web mentions found in search (`"mninteriors.org"` → 0 results); no backlink data source is connected (Moz/Bing/DataForSEO) to count exact referring domains. For a local trades business, **links matter less than the Google Business Profile, reviews and citations**. Priorities:
 
 1. **Google Business Profile** — the site quotes 71 reviews at 4.9★; make sure this profile is claimed, the category is "Interior designer" (+ "Kitchen remodeler", "Carpenter", "Furniture maker"), the website field points to the new domain, and photos are real. **VERIFY** the profile name/address match the site.
 2. **NAP consistency** — one exact format everywhere: `MN Interiors, No. 16, Ganapathy Nagar 1st Street, Sriperumbudur Main Road, Kundrathur, Chennai 6000XX, +91 98403 84824`. The site currently shows the phone in two formats and the area as "Kundrathur, Kavanur" / "Kundrathur & Kavanur".
@@ -167,7 +189,8 @@ Searchers for "interior designers in Kundrathur" expect: photos of finished home
 
 ## Appendix — evidence
 - Search: "MN Interiors" Kundrathur Chennai → no matching business; Indore "MN Interiors" on Houzz; IndiaMART "M N Interior" listings.
-- Search: `mninterior.in` → no pages from the domain.
+- Search: `mninterior.in` → no pages from the domain (footer domain). `site:mninteriors.org` and `"mninteriors.org"` → no results.
+- Live HTTP: see "Live-site findings" table.
 - Search: Kundrathur / Porur / Tambaram / Pallavaram interior designers → directories (IndiaMART, Sulekha, Quikr), national brands with locality pages (HomeLane, DesignCafe, Homworks), local firm Cibi+Simeon with Pallavaram pages.
 - Build: `dist/index.html` body is an empty root; no robots/sitemap/canonical/favicon/og:image/JSON-LD; `public/assets/aistudio/` would be deployed.
 - Render: 1 H1, 13 H2, 21 H3; 2,376 words; 5 images (all `loading=lazy`, no dimensions); internal links are 6 anchors (×2).

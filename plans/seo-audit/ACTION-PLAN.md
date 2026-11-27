@@ -15,7 +15,7 @@ Each task lists which audits it satisfies. Where two audits asked for the same t
 | # | Decision | Why it blocks |
 | --- | --- | --- |
 | 1 | **Correct PIN code** — 600069 (Kundrathur) or 600089? | NAP must be exact on site, schema, GBP and every directory |
-| 2 | **Domain** — is `mninterior.in` yours and the final address? | Canonicals, sitemap, schema, GBP website field |
+| 2 | ~~Domain~~ — **resolved: mninteriors.org** (footer still says mninterior.in → fix in 1.7) | — |
 | 3 | **Google Business Profile** — do you have access to the profile with the 71 reviews? | Map pack is the #1 traffic source for this business |
 | 4 | **Real photos** — when can you shoot 8–12 finished projects? | Project pages, service pages, area pages and E-E-A-T all depend on them |
 | 5 | **Price ranges** you're comfortable publishing (kitchen per sq ft, 2BHK/3BHK) | Cost guide + FAQ |
@@ -24,19 +24,29 @@ Each task lists which audits it satisfies. Where two audits asked for the same t
 
 ---
 
+## Phase 0 — Live-site fixes (this week, small and independent)
+
+| # | Task | Satisfies | Notes |
+| --- | --- | --- | --- |
+| 0.1 | Delete `public/assets/aistudio/` and redeploy | S-High | Private design doc is publicly readable right now |
+| 0.2 | Fix `www.mninteriors.org` (522) → 301 redirect to `https://mninteriors.org` | S-High | Cloudflare redirect rule |
+| 0.3 | Turn on Cloudflare "Always Use HTTPS" | S-Low | |
+| 0.4 | Footer domain → mninteriors.org; correct PIN once verified | S-High, D-copy | |
+| 0.5 | Verify mninteriors.org in Google Search Console + Bing Webmaster Tools (don't submit a sitemap until 1.5 exists) | S-Critical | |
+
 ## Phase 1 — Foundation (week 1): make the site crawlable and correct
 
 | # | Task | Satisfies | Notes |
 | --- | --- | --- | --- |
 | 1.1 | **Move to pre-rendered multi-page** (static HTML per route at build) | S-Critical (empty HTML, one URL), S-AI readiness | `vite-react-ssg` keeps the current React code; Astro is the alternative if a rebuild is acceptable. Everything in Phase 2 assumes real routes |
-| 1.2 | Delete `public/assets/aistudio/`; import images via Vite and drop the copy plugin | S-Technical | Stops publishing the private design doc + 3.4 MB of unused files |
+| 1.2 | Import images via Vite and drop the copy plugin | S-Technical | (folder deletion moved to 0.1) |
 | 1.3 | Image pipeline: AVIF/WebP at 640/1080/1600, `srcset`, width/height, blur placeholder, descriptive filenames | S-Performance, S-Images, W-L | **Reuse** `ProjectPhoto` + `projectImages.ts` from `showcase-test` |
 | 1.4 | Project data model (multiple photos, scope, area, facts) | W-A, S-content | **Reuse** from `showcase-test`; it now also feeds project pages, schema and sitemap |
-| 1.5 | `robots.txt`, `sitemap.xml` (generated from routes), canonical per page, favicon set, `og:image` per page | S-Technical quick wins | |
+| 1.5 | `robots.txt`, `sitemap.xml` (generated from routes), real 404 page with 404 status, canonical per page, favicon set, `og:image` per page | S-Technical | Today all of these paths return the homepage (soft 404) |
 | 1.6 | Site-wide `HomeAndConstructionBusiness` JSON-LD generated from `CONTACT_INFO` | S-Schema | Single source of truth = no NAP drift |
 | 1.7 | **NAP clean-up**: one phone format (`+91 98403 84824`), one address format, verified PIN | S-Local, D-copy (phone & locality formats) | One fix closes both audits |
 | 1.8 | Fix the enquiry form so submissions reach you (email/WhatsApp/sheet) | First review, D | Conversions — no point ranking if leads are lost |
-| 1.9 | Deploy (Vercel/Netlify) on the domain; Search Console + Bing Webmaster; submit sitemap | S-Critical | |
+| 1.9 | Redeploy to Cloudflare; submit sitemap in Search Console + Bing; request indexing of the homepage | S-Critical | |
 
 ## Phase 2 — Structure & pages (weeks 2–3): one homepage that sells, plus pages that rank
 

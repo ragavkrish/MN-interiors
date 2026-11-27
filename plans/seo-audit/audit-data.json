@@ -1,13 +1,13 @@
 {
  "summary": {
-  "health_score": 40,
+  "health_score": 38,
   "business_type": "Local service (hybrid: workshop + service area) \u2014 interior design & joinery, Kundrathur, Chennai",
   "top_findings": [
-   "Site not deployed; domain has no indexed pages",
-   "HTML body empty until JavaScript runs (client-side rendering only)",
-   "Only one URL \u2014 no service, project or area pages to rank",
-   "No structured data; brand name collides with other 'MN Interiors' businesses",
-   "Possible wrong PIN code (600089 vs Kundrathur 600069) \u2014 verify"
+   "Live at mninteriors.org but no pages indexed",
+   "HTML body empty until JavaScript runs",
+   "robots.txt, sitemap.xml and every unknown URL return the homepage (soft 404)",
+   "www.mninteriors.org returns Cloudflare 522; private design doc publicly readable",
+   "Only one URL; no structured data; footer shows wrong domain; PIN 600089 to verify"
   ],
   "quick_wins": [
    "robots.txt, sitemap.xml, canonical, favicon, og:image",
@@ -20,7 +20,7 @@
  "categories": [
   {
    "name": "Technical SEO",
-   "score": 35
+   "score": 30
   },
   {
    "name": "Content Quality",
@@ -78,8 +78,7 @@
   "plan": "ACTION-PLAN.md"
  },
  "limitations": [
-  "Site not live: no rankings, GSC, CrUX or backlink data",
-  "No DataForSEO/Moz/Google credentials configured",
-  "Outbound network restricted; web search used for SERP/brand checks"
+  "No pages indexed yet: no rankings, GSC or CrUX data",
+  "No DataForSEO/Moz/Google credentials configured"
  ]
 }
