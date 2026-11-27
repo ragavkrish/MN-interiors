@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { ChatCircleText, Compass, PhoneCall, WhatsappLogo } from '@phosphor-icons/react';
 import { CONTACT_INFO, HERO_SUMMARY_ROWS, MARQUEE_ITEMS } from '../data/content';
 
@@ -13,29 +14,49 @@ export function Hero({ onOpenEnquiry }: HeroProps) {
           {/* Left Column */}
           <div>
             {/* Outlined status pill */}
-            <div className="mb-6 inline-flex items-center gap-2.5 rounded-[99px] border border-white/18 px-4 py-2 text-[13px] font-medium text-white/85">
+            <div className="hero-enter-fade mb-6 inline-flex items-center gap-2.5 rounded-[99px] border border-white/18 px-4 py-2 text-[13px] font-medium text-white/85">
               <span className="live-dot" aria-hidden="true" />
               <span>KUNDRATHUR, CHENNAI · 4.9 ★ GOOGLE RATED (71 REVIEWS)</span>
             </div>
 
+            {/* Statement entrance: each line rises from behind a mask (CSS only, plays once) */}
             <h1 className="hero-h1 text-white">
-              20+ YEARS OF
-              <br />
-              CHENNAI INTERIORS.
-              <br />
-              <em>CRAFTED TO LAST</em>
-              <br />
-              <em>EVERY DAY.</em>
+              <span className="hero-line">
+                <span className="hero-line-inner" style={{ animationDelay: '0ms' }}>
+                  20+ YEARS OF
+                </span>
+              </span>{' '}
+              <span className="hero-line">
+                <span className="hero-line-inner" style={{ animationDelay: '80ms' }}>
+                  CHENNAI INTERIORS.
+                </span>
+              </span>{' '}
+              <span className="hero-line">
+                <em className="hero-line-inner" style={{ animationDelay: '170ms' }}>
+                  CRAFTED TO LAST
+                </em>
+              </span>{' '}
+              <span className="hero-line">
+                <em className="hero-line-inner" style={{ animationDelay: '260ms' }}>
+                  EVERY DAY.
+                </em>
+              </span>
             </h1>
 
-            <p className="mt-6 max-w-[560px] text-[18px] leading-[1.65] font-normal text-white/65 max-[680px]:text-[16px]">
+            <p
+              className="hero-enter-rise mt-6 max-w-[560px] text-[18px] leading-[1.65] font-normal text-white/65 max-[680px]:text-[16px]"
+              style={{ animationDelay: '350ms' }}
+            >
               From our own workshop in Kundrathur, Kavanur, MN Interiors has been designing and
               building kitchens, wardrobes, pooja rooms, full homes, and shops across Chennai for
               over 20 years—known for neat finishing, honest pricing, and woodwork that truly lasts.
             </p>
 
             {/* Primary & Ghost CTA buttons */}
-            <div className="mt-8 flex flex-wrap items-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch">
+            <div
+              className="hero-enter-rise mt-8 flex flex-wrap items-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch"
+              style={{ animationDelay: '420ms' }}
+            >
               <button
                 type="button"
                 onClick={onOpenEnquiry}
@@ -56,7 +77,10 @@ export function Hero({ onOpenEnquiry }: HeroProps) {
               </a>
             </div>
 
-            <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] leading-[1.5] text-white/50">
+            <p
+              className="hero-enter-rise mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] leading-[1.5] text-white/50"
+              style={{ animationDelay: '480ms' }}
+            >
               <span>Free site visit across Chennai</span>
               <span aria-hidden="true">·</span>
               <span>10-Year Warranty</span>
@@ -72,7 +96,16 @@ export function Hero({ onOpenEnquiry }: HeroProps) {
           </div>
 
           {/* Right Column: Ink 2 Summary Card */}
-          <div className="rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]">
+          <div
+            className="hero-enter-rise rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]"
+            style={
+              {
+                animationDelay: '450ms',
+                animationDuration: '700ms',
+                '--hero-rise': '16px',
+              } as CSSProperties
+            }
+          >
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.18em] text-[#F31C60] uppercase">

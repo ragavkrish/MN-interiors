@@ -281,7 +281,10 @@
 }
 
 .faq-disc {
-  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  transition:
+    transform 200ms var(--ease-in-out),
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 .faq-item[open] .faq-disc {
@@ -427,12 +430,12 @@
   transform: none;
 }
 
-/* Stagger: 50ms per item, capped so a group never takes longer than ~300ms */
-.reveal-ready [data-reveal-group].is-revealed > :nth-child(2) { transition-delay: 50ms; }
-.reveal-ready [data-reveal-group].is-revealed > :nth-child(3) { transition-delay: 100ms; }
-.reveal-ready [data-reveal-group].is-revealed > :nth-child(4) { transition-delay: 150ms; }
-.reveal-ready [data-reveal-group].is-revealed > :nth-child(5) { transition-delay: 200ms; }
-.reveal-ready [data-reveal-group].is-revealed > :nth-child(n + 6) { transition-delay: 250ms; }
+/* Stagger: shrinking gaps so a group reads as one motion, capped at 175ms */
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(2) { transition-delay: 45ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(3) { transition-delay: 85ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(4) { transition-delay: 120ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(5) { transition-delay: 150ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(n + 6) { transition-delay: 175ms; }
 
 /* ---------- Count-up suffix ("+", "★") settles in after the number lands ---------- */
 .count-final-suffix {
@@ -461,5 +464,66 @@
   .btn-pink:active,
   .btn-ghost:active {
     transform: none;
+  }
+}
+
+/* ---------- Hero statement entrance (plays once on load, CSS only) ---------- */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  /* room for glyph bottoms so nothing is clipped once settled */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.hero-line-inner {
+  display: block;
+  animation: hero-line-rise 700ms var(--ease-out) both;
+}
+
+.hero-enter-fade {
+  animation: hero-fade-in 400ms var(--ease-out) both;
+}
+
+.hero-enter-rise {
+  animation: hero-rise-in 500ms var(--ease-out) both;
+}
+
+@keyframes hero-line-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-rise, 12px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line-inner,
+  .hero-enter-fade,
+  .hero-enter-rise {
+    animation: hero-fade-in 300ms ease both;
+    animation-delay: 0ms !important;
+    animation-duration: 300ms !important;
   }
 }

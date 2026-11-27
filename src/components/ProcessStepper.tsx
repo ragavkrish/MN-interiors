@@ -13,8 +13,10 @@ export function ProcessStepper() {
   // --ease-out from index.css
   const easeOut = [0.23, 1, 0.32, 1] as const;
   const contentEnter = {
-    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, x: 8 * direction },
-    animate: { opacity: 1, x: 0 },
+    initial: reduceMotion
+      ? { opacity: 0, transform: 'translateX(0px)' }
+      : { opacity: 0, transform: `translateX(${8 * direction}px)` },
+    animate: { opacity: 1, transform: 'translateX(0px)' },
     transition: { duration: 0.2, ease: easeOut },
   };
 

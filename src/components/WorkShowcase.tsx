@@ -216,8 +216,12 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
             Keyed on the filter so a new selection settles in instead of snapping. */}
         <motion.div
           key={activeCategory}
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={
+            reduceMotion
+              ? { opacity: 0, transform: 'translateY(0px)' }
+              : { opacity: 0, transform: 'translateY(8px)' }
+          }
+          animate={{ opacity: 1, transform: 'translateY(0px)' }}
           transition={{ duration: 0.25, ease: easeOut }}
         >
           {activeCategory === 'All Work' ? (
@@ -297,12 +301,16 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
             <motion.div
               className="relative max-h-[94vh] w-full max-w-[1120px] overflow-y-auto rounded-[20px] border border-white/15 bg-[#0A0A0A] text-white"
               onClick={(e) => e.stopPropagation()}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1, transition: { duration: 0.3, ease: easeDrawer } }}
+              initial={
+                reduceMotion
+                  ? { opacity: 0, transform: 'scale(1)' }
+                  : { opacity: 0, transform: 'scale(0.96)' }
+              }
+              animate={{ opacity: 1, transform: 'scale(1)', transition: { duration: 0.3, ease: easeDrawer } }}
               exit={
                 reduceMotion
                   ? { opacity: 0, transition: { duration: 0.15 } }
-                  : { opacity: 0, scale: 0.97, transition: { duration: 0.15, ease: easeOut } }
+                  : { opacity: 0, transform: 'scale(0.97)', transition: { duration: 0.15, ease: easeOut } }
               }
             >
               {/* Top Bar inside Lightbox */}

@@ -130,12 +130,16 @@ export function BookingModal({
           <motion.div
             className="max-h-[92vh] w-full max-w-[540px] overflow-y-auto rounded-[20px] border border-white/15 bg-[#0A0A0A] p-[32px] text-white max-[680px]:p-[22px]"
             onClick={(e) => e.stopPropagation()}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1, transition: { duration: 0.25, ease: easeOut } }}
+            initial={
+              reduceMotion
+                ? { opacity: 0, transform: 'scale(1)' }
+                : { opacity: 0, transform: 'scale(0.96)' }
+            }
+            animate={{ opacity: 1, transform: 'scale(1)', transition: { duration: 0.25, ease: easeOut } }}
             exit={
               reduceMotion
                 ? { opacity: 0, transition: { duration: 0.15 } }
-                : { opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: easeOut } }
+                : { opacity: 0, transform: 'scale(0.96)', transition: { duration: 0.15, ease: easeOut } }
             }
           >
             <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
@@ -162,10 +166,34 @@ export function BookingModal({
             </div>
 
             {confirmation ? (
-              <div className="mt-6">
+              <motion.div
+                className="mt-6"
+                initial={
+                  reduceMotion
+                    ? { opacity: 0, transform: 'translateY(0px)' }
+                    : { opacity: 0, transform: 'translateY(8px)' }
+                }
+                animate={{ opacity: 1, transform: 'translateY(0px)' }}
+                transition={{ duration: 0.25, ease: easeOut }}
+              >
                 <div className="rounded-[14px] border border-[#F31C60]/40 bg-[#F31C60]/12 p-5">
                   <div className="flex items-center gap-3">
-                    <CheckCircle size={28} weight="fill" className="shrink-0 text-[#F31C60]" />
+                    <motion.span
+                      className="inline-flex shrink-0"
+                      initial={
+                        reduceMotion
+                          ? { opacity: 0, transform: 'scale(1)' }
+                          : { opacity: 0, transform: 'scale(0.9)' }
+                      }
+                      animate={{ opacity: 1, transform: 'scale(1)' }}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0.2 }
+                          : { type: 'spring', duration: 0.5, bounce: 0.2, delay: 0.1 }
+                      }
+                    >
+                      <CheckCircle size={28} weight="fill" className="shrink-0 text-[#F31C60]" />
+                    </motion.span>
                     <div>
                       <p className="text-[11px] font-bold tracking-[0.16em] text-[#F31C60] uppercase">
                         ENQUIRY REFERENCE
@@ -231,7 +259,7 @@ export function BookingModal({
                     Done
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
                 {/* Direct Call / WhatsApp strip */}

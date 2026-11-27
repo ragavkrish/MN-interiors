@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { cubicBezier } from 'motion';
 
 interface CountUpProps {
   /** Final number to land on, e.g. 20 or 4.9 */
@@ -13,8 +14,8 @@ interface CountUpProps {
   duration?: number;
 }
 
-// --ease-out: cubic-bezier(0.23, 1, 0.32, 1), approximated as a fast-start curve
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
+// --ease-out from index.css
+const easeOut = cubicBezier(0.23, 1, 0.32, 1);
 
 /**
  * Counts up from 0 once, the first time half of it is on screen.
