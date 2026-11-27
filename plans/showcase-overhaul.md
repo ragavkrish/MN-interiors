@@ -13,7 +13,7 @@
 | What we found | Where | Why it matters |
 | --- | --- | --- |
 | The hero has **no imagery at all** — headline + a text table | `src/components/Hero.tsx` | An interiors studio's first impression is a text block. Visitors decide in seconds whether the work looks good; today they can't see any. |
-| Only **5 projects**, **1 photo each** | `WORK_SHOWCASE_ITEMS`, `src/data/content.ts:107` | 20+ years of work shown as 5 single photos reads as a young company. |
+| Only **5 projects**, **1 photo each** | `WORK_SHOWCASE_ITEMS`, `src/data/content.ts:102` | 20+ years of work shown as 5 single photos reads as a young company. |
 | Projects have no facts (budget band, size, duration, materials, year) | `ShowcaseItem` interface, `content.ts:80` | Facts make a photo believable and help visitors picture *their* project. |
 | "Real projects. Happy clients." is **text only** — 3 case studies with no photos | `CHENNAI_BENCHMARKS`, `App.tsx` band 8 | The strongest proof section has nothing to look at, and duplicates the gallery. |
 | Services ("What we do") cards have **no photos and don't link to work** | `SIGNATURE_ROOMS`, `App.tsx` band 7 | "Modular kitchens" with an icon instead of a kitchen. |
