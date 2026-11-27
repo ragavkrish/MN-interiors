@@ -2,33 +2,38 @@ import { useState } from 'react';
 import {
   Armchair,
   BuildingOffice,
-  CalendarCheck,
+  ChatCircleText,
   Check,
+  Clock,
   CookingPot,
   Door,
   Factory,
   Hammer,
   Lamp,
   MapPin,
+  PhoneCall,
   Plus,
   Ruler,
   ShieldCheck,
   Sparkle,
   Star,
+  WhatsappLogo,
   X,
 } from '@phosphor-icons/react';
-import { BookingModal, type BookingMode } from './components/BookingModal';
+import { BookingModal } from './components/BookingModal';
 import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ProcessStepper } from './components/ProcessStepper';
 import { StickyBottomBar } from './components/StickyBottomBar';
+import { WorkShowcase } from './components/WorkShowcase';
 import {
-  AUDIT_CHECKLIST,
-  AUDIT_VALUE_ROWS,
   CHENNAI_BENCHMARKS,
   COMPARISON_AFTER,
   COMPARISON_BEFORE,
+  CONTACT_INFO,
   CRAFT_PILLARS,
+  ENQUIRY_CHECKLIST,
+  ENQUIRY_STEPS,
   FAQS,
   PROBLEM_POINTS,
   SIGNATURE_ROOMS,
@@ -71,20 +76,30 @@ function RoomIcon({ icon }: { icon: RoomScope['icon'] }) {
 
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<BookingMode>('audit');
+  const [enquiryScope, setEnquiryScope] = useState('Full Home Interiors');
+  const [enquiryNote, setEnquiryNote] = useState('');
 
-  const openBooking = (mode: BookingMode = 'audit') => {
-    setModalMode(mode);
+  const openEnquiry = () => {
+    setEnquiryScope('Full Home Interiors');
+    setEnquiryNote('');
+    setModalOpen(true);
+  };
+
+  const handleEnquireStyle = (scope: string, projectTitle: string) => {
+    setEnquiryScope(scope);
+    setEnquiryNote(
+      projectTitle ? `Interested in a similar style to: ${projectTitle}` : '',
+    );
     setModalOpen(true);
   };
 
   return (
     <div className="min-h-screen w-full bg-white text-[#0A0A0A]">
-      <Navbar onOpenBooking={openBooking} />
+      <Navbar onOpenEnquiry={openEnquiry} />
 
       <main>
         {/* BAND 1: DARK HERO + PINK MARQUEE TICKER */}
-        <Hero onOpenBooking={openBooking} />
+        <Hero onOpenEnquiry={openEnquiry} />
 
         {/* BAND 2: WHITE 4-UP STATS STRIP */}
         <section className="w-full border-b border-[#E6E6E6] bg-white">
@@ -111,22 +126,24 @@ export default function App() {
           </div>
         </section>
 
+        {/* NEW BAND: MIST GRAY FILTERABLE BENTO WORK SHOWCASE + LIGHTBOX */}
+        <WorkShowcase onEnquireStyle={handleEnquireStyle} />
+
         {/* BAND 3: DARK PROBLEM VS SOLUTION + PULL-QUOTE */}
         <section className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
             <div className="mx-auto max-w-[760px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
-                THE CHENNAI REALITY CHECK
+                WHY EXPERIENCE MATTERS
               </p>
               <h2 className="section-h2 text-white">
-                WHY MOST INTERIORS
+                GOOD INTERIORS SHOULD NOT
                 <br />
-                FAIL IN <em>THREE MONSOONS</em>
+                WEAR OUT IN <em>THREE YEARS</em>
               </h2>
               <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-white/65 max-[680px]:text-[16px]">
-                Showroom renders look identical on day one. Three coastal summers later, the
-                difference between outsourced MDF and true Chennai craftsmanship shows up in every
-                hinge, edge, and shutter.
+                Everything looks shiny on handover day. The real test is how your kitchen drawers,
+                wardrobe doors, and finishes hold up after years of everyday family use in Chennai.
               </p>
             </div>
 
@@ -134,7 +151,7 @@ export default function App() {
               {/* Left: Problem List with Cross Badges */}
               <div className="space-y-3">
                 <p className="mb-4 text-[11px] font-semibold tracking-[0.18em] text-white/50 uppercase">
-                  WHAT GOES WRONG WITH TYPICAL VENDORS
+                  COMMON HEADACHES HOMEOWNERS FACE
                 </p>
                 {PROBLEM_POINTS.map((point) => (
                   <div
@@ -149,23 +166,23 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Right: Founder Pull-Quote + Solution List with Tick Badges */}
+              {/* Right: Pull-Quote + Solution List with Tick Badges */}
               <div className="space-y-6">
                 <blockquote className="rounded-r-[12px] border-l-[3px] border-[#F31C60] bg-[#141414] px-6 py-6">
                   <p className="text-[17px] leading-[1.65] italic text-white/85">
-                    &ldquo;A Chennai home battles salt air, 42°C summers, and heavy monsoon
-                    humidity. You cannot build that home with catalog particle board and rotating
-                    freelance labour. You build it with seasoned timber, marine core, and craftsmen
-                    who sign their own work.&rdquo;
+                    &ldquo;Your home is where your family lives every single day. For over 20
+                    years, our rule at MN Interiors has been simple: use honest materials, take
+                    pride in the finish, and build every unit as if it were for our own
+                    house.&rdquo;
                   </p>
                   <footer className="mt-4 text-[13px] font-semibold text-white/60">
-                    — S. SUNDARARAJAN, FOUNDER &amp; CHIEF MASTER CRAFTSMAN (EST. 2004)
+                    — MN INTERIORS, KUNDRATHUR · CHENNAI
                   </footer>
                 </blockquote>
 
                 <div className="space-y-3">
                   <p className="text-[11px] font-semibold tracking-[0.18em] text-[#F31C60] uppercase">
-                    THE KALAIGAR 22-YEAR STANDARD
+                    HOW MN INTERIORS DOES IT DIFFERENTLY
                   </p>
                   {SOLUTION_POINTS.map((point) => (
                     <div
@@ -189,16 +206,16 @@ export default function App() {
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                THE CRAFTSMANSHIP DIFFERENCE
+                WHAT WE ARE KNOWN FOR
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
-                WHAT 22 YEARS OF
+                20+ YEARS OF HONEST
                 <br />
-                <em>OBSESSION LOOKS LIKE</em>
+                <em>CHENNAI CRAFTSMANSHIP</em>
               </h2>
               <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                Six non-negotiable engineering and joinery standards built into every kitchen,
-                wardrobe, pooja sanctuary, and living space we sign our name to.
+                No fancy buzzwords—just neat work, dependable materials, and a local Kundrathur team
+                that cares deeply about how your home turns out.
               </p>
             </div>
 
@@ -256,7 +273,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* BAND 5: DARK INTERACTIVE 6-STAGE TABBED STEPPER */}
+        {/* BAND 5: DARK INTERACTIVE 6-STEP PROCESS STEPPER */}
         <ProcessStepper />
 
         {/* BAND 6: DARK COMPARISON PAIR (WHITE BEFORE VS INK 2 2PX PINK WINNER) */}
@@ -264,16 +281,16 @@ export default function App() {
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
-                WHICH ONE ARE YOU HIRING?
+                THE DIFFERENCE IS CLEAR
               </p>
               <h2 className="section-h2 text-white">
-                THIS IS NOT AN
+                WHY FAMILIES CHOOSE
                 <br />
-                <em>APP AGGREGATOR</em>
+                <em>MN INTERIORS</em>
               </h2>
               <p className="mx-auto max-w-[600px] text-[18px] leading-[1.65] text-white/65 max-[680px]:text-[16px]">
-                Compare how a 22-year Chennai master joinery studio operates against brokered
-                interior apps and local site contractors.
+                See how working directly with an established Kundrathur interior workshop compares
+                to dealing with middlemen and rushed contractors.
               </p>
             </div>
 
@@ -281,10 +298,10 @@ export default function App() {
               {/* Left: Before Card (White with Mist Gray Tag) */}
               <div className="rounded-[16px] border border-[#E6E6E6] bg-white p-[34px] text-[#0A0A0A] max-[680px]:p-[24px]">
                 <span className="inline-block rounded-[6px] bg-[#F4F4F4] px-[10px] py-[6px] text-[11px] font-bold tracking-[0.16em] text-[#666666] uppercase">
-                  TYPICAL CONTRACTORS &amp; APPS
+                  TYPICAL CONTRACTORS
                 </span>
                 <h3 className="font-display mt-4 text-[30px] leading-[1.1] font-black tracking-[-0.5px] text-[#0A0A0A] max-[680px]:text-[24px]">
-                  OUTSOURCED &amp; SHORT-LIVED
+                  RUSHED WORK &amp; SURPRISES
                 </h3>
                 <ul className="mt-6 space-y-4">
                   {COMPARISON_BEFORE.map((item) => (
@@ -301,10 +318,10 @@ export default function App() {
               {/* Right: Winner Card (Ink 2 with 2px Pink Border & Solid Pink Tag) */}
               <div className="rounded-[16px] border-2 border-[#F31C60] bg-[#141414] p-[34px] text-white max-[680px]:p-[24px]">
                 <span className="inline-block rounded-[6px] bg-[#F31C60] px-[10px] py-[6px] text-[11px] font-bold tracking-[0.16em] text-white uppercase">
-                  KALAIGAR SINCE 2004
+                  MN INTERIORS · 20+ YEARS
                 </span>
                 <h3 className="font-display mt-4 text-[30px] leading-[1.1] font-black tracking-[-0.5px] text-white max-[680px]:text-[24px]">
-                  IN-HOUSE MASTER CRAFTSMANSHIP
+                  NEAT WORK &amp; PEACE OF MIND
                 </h3>
                 <ul className="mt-6 space-y-4">
                   {COMPARISON_AFTER.map((item) => (
@@ -322,20 +339,20 @@ export default function App() {
         </section>
 
         {/* BAND 7: WHITE SIGNATURE ROOMS 4-UP GRID */}
-        <section className="band-section w-full bg-white text-[#0A0A0A]">
+        <section id="services" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                WHAT WE CRAFT IN-HOUSE
+                WHAT WE DO
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
-                EVERY ROOM BUILT
+                EVERY SPACE DESIGNED
                 <br />
-                <em>TO A SINGLE STANDARD</em>
+                <em>WITH CARE &amp; DETAIL</em>
               </h2>
               <p className="mx-auto max-w-[600px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                Whether you are commissioning a sea-facing Adyar penthouse or a multi-generational
-                Anna Nagar bungalow, every piece leaves our Ambattur floor ready to last decades.
+                Whether you need a complete 2BHK, 3BHK, or independent house interior, a brand-new
+                kitchen and wardrobes, or neat interiors for your shop, we build it with care.
               </p>
             </div>
 
@@ -391,21 +408,21 @@ export default function App() {
           </div>
         </section>
 
-        {/* BAND 8: MIST GRAY CHENNAI NEIGHBOURHOOD PROOF BENCHMARKS */}
+        {/* BAND 8: MIST GRAY CHENNAI HOMES COMPLETED */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                BUILT ACROSS CHENNAI
+                ACROSS CHENNAI
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
-                REAL HOMES.
+                REAL PROJECTS.
                 <br />
-                <em>MEASURED CRAFTSMANSHIP.</em>
+                <em>HAPPY CLIENTS.</em>
               </h2>
               <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                No vague promises—look at the exact timelines, materials, and handover records from
-                recent turnkey residences we completed across Chennai.
+                From independent houses around Kundrathur and Porur to apartments and shops across
+                Chennai, our work speaks for itself.
               </p>
             </div>
 
@@ -439,7 +456,7 @@ export default function App() {
                       </h3>
 
                       <p
-                        className={`mt-2 text-[12px] font-semibold tracking-[0.12em] uppercase tabular-nums ${
+                        className={`mt-2 text-[12px] font-semibold tracking-[0.12em] uppercase ${
                           isHot ? 'text-white/80' : 'text-[#666666]'
                         }`}
                       >
@@ -471,21 +488,21 @@ export default function App() {
           </div>
         </section>
 
-        {/* BAND 9: DARK FIVE-STAR TESTIMONIALS (FIRST CARD SOLID PINK) */}
-        <section className="band-section w-full bg-[#0A0A0A] text-white">
+        {/* BAND 9: DARK VERIFIED GOOGLE REVIEWS (FIRST CARD SOLID PINK) */}
+        <section id="reviews" className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
-                WORD OF MOUTH FOR 22 YEARS
+                4.9 ★ ON GOOGLE · 71 VERIFIED REVIEWS
               </p>
               <h2 className="section-h2 text-white">
-                WHY 74% OF OUR
+                WHAT OUR CLIENTS
                 <br />
-                <em>CLIENTS ARE REFERRALS</em>
+                <em>SAY ON GOOGLE</em>
               </h2>
               <p className="mx-auto max-w-[600px] text-[18px] leading-[1.65] text-white/65 max-[680px]:text-[16px]">
-                When families live inside our joinery for ten years and then call us back for their
-                children&apos;s homes, that is the only award that matters.
+                Real feedback from Chennai homeowners and business owners who trusted MN Interiors
+                with their spaces.
               </p>
             </div>
 
@@ -536,11 +553,11 @@ export default function App() {
                         {t.role}
                       </p>
                       <p
-                        className={`mt-1 text-[12px] font-semibold tracking-[0.06em] uppercase tabular-nums ${
+                        className={`mt-1 text-[12px] font-semibold tracking-[0.06em] uppercase ${
                           isHot ? 'text-white/90' : 'text-[#F31C60]'
                         }`}
                       >
-                        {t.locality} · {t.projectYear}
+                        {t.source}
                       </p>
                     </div>
                   </article>
@@ -550,34 +567,33 @@ export default function App() {
           </div>
         </section>
 
-        {/* BAND 10: WHITE VALUE-STACK TABLE + DARK PRICE CARD */}
-        <section id="pricing" className="band-section w-full bg-white text-[#0A0A0A]">
+        {/* BAND 10: WHITE FREE CONSULTATION & DIRECT CONTACT CARD */}
+        <section id="enquire" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
             <div className="mx-auto max-w-[740px] text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                START WITH TOTAL CLARITY
+                GET STARTED WITH ZERO PRESSURE
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
-                ONE SITE AUDIT.
+                FREE SITE VISIT.
                 <br />
-                <em>ZERO GUESSWORK.</em>
+                <em>CLEAR WRITTEN QUOTE.</em>
               </h2>
               <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                Before you commit a single lakh to construction, our senior designer and head
-                carpenter build your full spatial plan, material box, and locked BOQ in 10 working
-                days.
+                Planning interiors for a new flat, independent house, shop, or renovation in
+                Chennai? Call, WhatsApp, or send us an enquiry for a free visit and quote.
               </p>
             </div>
 
             <div className="grid-price mt-12">
-              {/* Left: Hairline Value-Stack Table */}
+              {/* Left: Hairline What's Included Table */}
               <div className="rounded-[18px] border border-[#E6E6E6] bg-white p-[28px] max-[680px]:p-[20px]">
                 <p className="mb-4 text-[11px] font-bold tracking-[0.18em] text-[#D4104C] uppercase">
-                  EVERYTHING INSIDE YOUR BLUEPRINT PACKAGE
+                  WHAT YOU GET WHEN YOU ENQUIRE
                 </p>
 
                 <div className="divide-y divide-[#E6E6E6]">
-                  {AUDIT_VALUE_ROWS.map((row) => (
+                  {ENQUIRY_STEPS.map((row) => (
                     <div
                       key={row.item}
                       className="flex items-start justify-between gap-4 py-[18px] max-[680px]:flex-col max-[680px]:gap-1.5"
@@ -590,50 +606,39 @@ export default function App() {
                           {row.detail}
                         </p>
                       </div>
-                      <span className="font-display shrink-0 text-[20px] font-extrabold text-[#0A0A0A] tabular-nums">
-                        {row.value}
+                      <span className="font-display shrink-0 text-[13px] font-extrabold tracking-[0.08em] text-[#D4104C] uppercase">
+                        {row.tag}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                {/* Total Row */}
+                {/* Bottom summary row */}
                 <div className="mt-2 flex items-center justify-between gap-4 border-t-2 border-[#0A0A0A] pt-5">
                   <span className="font-display text-[19px] font-extrabold text-[#0A0A0A]">
-                    TOTAL DELIVERABLE VALUE
+                    CONSULTATION &amp; ESTIMATE FEE
                   </span>
-                  <span className="font-display text-[24px] font-black text-[#D4104C] tabular-nums">
-                    ₹45,000
-                  </span>
+                  <span className="font-display text-[24px] font-black text-[#D4104C]">FREE</span>
                 </div>
               </div>
 
-              {/* Right: Dark Price Card (20px radius, 34px padding, 72px pink price) */}
+              {/* Right: Dark Enquiry & Direct Contact Card */}
               <div className="rounded-[20px] bg-[#0A0A0A] p-[34px] text-white max-[680px]:p-[24px]">
                 <span className="inline-block rounded-[6px] bg-[#F31C60]/15 px-3 py-1.5 text-[11px] font-bold tracking-[0.16em] text-[#F31C60] uppercase">
-                  100% ADJUSTED IN EXECUTION
+                  NO OBLIGATION · ALL OVER CHENNAI
                 </span>
 
-                <div className="mt-5 flex items-baseline gap-3">
-                  <span className="font-display text-[22px] font-extrabold text-white/50 line-through tabular-nums">
-                    ₹45,000
-                  </span>
-                  <span className="text-[13px] font-semibold text-white/60">
-                    Standard Design Audit Fee
-                  </span>
-                </div>
-
-                <p className="font-display mt-2 text-[72px] leading-none font-black tracking-[-2px] text-[#F31C60] tabular-nums max-[680px]:text-[60px]">
-                  ₹4,999
+                <p className="font-display mt-5 text-[72px] leading-none font-black tracking-[-2px] text-[#F31C60] max-[680px]:text-[56px]">
+                  FREE
                 </p>
 
-                <p className="mt-3 text-[14px] leading-[1.55] text-white/65">
-                  One-time Chennai on-site audit fee · Fully deducted from your first execution
-                  milestone if you build with Kalaigar.
+                <p className="mt-3 text-[14.5px] leading-[1.55] text-white/70">
+                  Book a free site visit anywhere in Chennai or visit our Kundrathur, Kavanur
+                  workshop to discuss your interiors directly.
                 </p>
 
                 <ul className="mt-6 space-y-3.5 border-t border-white/10 pt-6">
-                  {AUDIT_CHECKLIST.map((item) => (
+                  {ENQUIRY_CHECKLIST.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[6px] bg-[#F31C60] text-white">
                         <Check size={12} weight="bold" aria-hidden="true" />
@@ -645,44 +650,62 @@ export default function App() {
 
                 <button
                   type="button"
-                  onClick={() => openBooking('audit')}
+                  onClick={openEnquiry}
                   className="btn-pink btn-lg mt-7 w-full"
                 >
-                  <CalendarCheck size={18} weight="fill" aria-hidden="true" />
-                  <span>Book Site Audit — ₹4,999</span>
+                  <ChatCircleText size={18} weight="fill" aria-hidden="true" />
+                  <span>Request a Free Quote</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => openBooking('visit')}
-                  className="btn-ghost btn-md mt-3 w-full"
-                >
-                  <span>Or Schedule a Free Workshop Visit</span>
-                </button>
+                <div className="mt-3 grid grid-cols-2 gap-2.5 max-[680px]:grid-cols-1">
+                  <a
+                    href={CONTACT_INFO.whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-ghost btn-sm w-full"
+                  >
+                    <WhatsappLogo
+                      size={17}
+                      weight="fill"
+                      className="text-[#2FD47A]"
+                      aria-hidden="true"
+                    />
+                    <span>WhatsApp Us</span>
+                  </a>
+                  <a href={CONTACT_INFO.phoneHref} className="btn-ghost btn-sm w-full tabular-nums">
+                    <PhoneCall
+                      size={16}
+                      weight="fill"
+                      className="text-[#F31C60]"
+                      aria-hidden="true"
+                    />
+                    <span>{CONTACT_INFO.phoneLocal}</span>
+                  </a>
+                </div>
 
                 <p className="mt-4 text-center text-[12.5px] leading-[1.5] text-white/50">
-                  Only 4 turnkey build slots accepted per month to protect our craft quality.
+                  {CONTACT_INFO.addressLine1}, Kundrathur · {CONTACT_INFO.hours}
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* BAND 11: MIST GRAY 20-YEAR OWNERSHIP MATH & GUARANTEE (NARROW 900PX) */}
+        {/* BAND 11: MIST GRAY 3 SIMPLE PROMISES (NARROW 900PX) */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-narrow">
             <div className="text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                THE 20-YEAR OWNERSHIP MATH
+                OUR SIMPLE PROMISE
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
-                CHEAP INTERIORS
+                THREE THINGS WE NEVER
                 <br />
-                <em>COST YOU TWICE</em>
+                <em>COMPROMISE ON</em>
               </h2>
               <p className="mx-auto max-w-[600px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-                Replacing swollen particle-board kitchens and peeling wardrobes after Year 5 costs
-                more than building with marine ply and solid teak on Day 1.
+                A 4.9-star reputation across Chennai is not built by ads—it is built by keeping
+                your word on every single project for over twenty years.
               </p>
             </div>
 
@@ -690,40 +713,40 @@ export default function App() {
               <div className="grid-3">
                 <div className="border-r border-[#E6E6E6] pr-4 max-[1000px]:border-r-0 max-[1000px]:border-b max-[1000px]:pr-0 max-[1000px]:pb-5">
                   <p className="text-[11px] font-bold tracking-[0.16em] text-[#666666] uppercase">
-                    CHEAP MDF BUILD (15 YRS)
+                    PROMISE 01
                   </p>
-                  <p className="font-display mt-2 text-[34px] leading-none font-black tracking-[-1px] text-[#0A0A0A] tabular-nums">
-                    ₹34L+
+                  <p className="font-display mt-2 text-[32px] leading-none font-black tracking-[-1px] text-[#0A0A0A]">
+                    HONEST
                   </p>
                   <p className="mt-2.5 text-[14px] leading-[1.55] text-[#666666]">
-                    ₹14L initial build + ₹18L full tear-out &amp; rebuild at Year 6 + temporary stay
-                    disruption.
+                    Clear written pricing and genuine materials—we tell you clearly what goes into
+                    your space with zero hidden charges.
                   </p>
                 </div>
 
                 <div className="border-r border-[#E6E6E6] pr-4 max-[1000px]:border-r-0 max-[1000px]:border-b max-[1000px]:pr-0 max-[1000px]:pb-5">
                   <p className="text-[11px] font-bold tracking-[0.16em] text-[#D4104C] uppercase">
-                    KALAIGAR BWP + TEAK (15 YRS)
+                    PROMISE 02
                   </p>
-                  <p className="font-display mt-2 text-[34px] leading-none font-black tracking-[-1px] text-[#F31C60] tabular-nums">
-                    ₹21L
+                  <p className="font-display mt-2 text-[32px] leading-none font-black tracking-[-1px] text-[#F31C60] tabular-nums">
+                    10 YR
                   </p>
                   <p className="mt-2.5 text-[14px] leading-[1.55] text-[#666666]">
-                    Built once in Ambattur with IS:710 Gurjan core, Blum runners, and a written
-                    15-year structural warranty.
+                    Backed by a solid 10-year warranty and our permanent Kundrathur workshop team
+                    whenever you need support.
                   </p>
                 </div>
 
                 <div>
                   <p className="text-[11px] font-bold tracking-[0.16em] text-[#0A0A0A] uppercase">
-                    YOUR CONTRACTUAL SHIELD
+                    PROMISE 03
                   </p>
-                  <p className="font-display mt-2 text-[34px] leading-none font-black tracking-[-1px] text-[#0A0A0A] tabular-nums">
-                    100%
+                  <p className="font-display mt-2 text-[32px] leading-none font-black tracking-[-1px] text-[#0A0A0A]">
+                    ON TIME
                   </p>
                   <p className="mt-2.5 text-[14px] leading-[1.55] text-[#666666]">
-                    Fixed handover penalty clause + zero hidden BOQ escalations + complimentary
-                    6-month hinge tune-up.
+                    Planned carefully around your move-in and housewarming dates so you step into a
+                    spotless, finished space.
                   </p>
                 </div>
               </div>
@@ -736,7 +759,7 @@ export default function App() {
           <div className="container-narrow">
             <div className="text-center">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-                STRAIGHT ANSWERS
+                COMMON QUESTIONS
               </p>
               <h2 className="section-h2 text-[#0A0A0A]">
                 QUESTIONS CHENNAI
@@ -770,121 +793,188 @@ export default function App() {
         <section className="band-final w-full bg-[#0A0A0A] text-white">
           <div className="container-narrow text-center">
             <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
-              LIMITED TO 4 CHENNAI HOMES PER MONTH
+              CALL, WHATSAPP OR VISIT US IN KUNDRATHUR
             </p>
             <h2 className="section-h2-xl text-white">
-              BUILD YOUR HOME ONCE.
+              TALK TO CHENNAI&apos;S
               <br />
-              BUILD IT <em>FOR TWENTY YEARS.</em>
+              TRUSTED <em>INTERIOR TEAM.</em>
             </h2>
             <p className="mx-auto max-w-[600px] text-[18px] leading-[1.65] text-white/65 max-[680px]:text-[16px]">
-              Reserve your on-site laser audit, physical craftsmanship material box, and locked
-              turnkey BOQ with Chennai&apos;s 22-year master joinery studio.
+              Send us a quick enquiry for a free site visit anywhere in Chennai, or call and
+              WhatsApp us directly on{' '}
+              <a
+                href={CONTACT_INFO.phoneHref}
+                className="font-semibold text-white underline tabular-nums"
+              >
+                {CONTACT_INFO.phoneDisplay}
+              </a>
+              .
             </p>
 
-            <div className="mt-8 flex flex-col items-center justify-center">
-              <span className="font-display text-[20px] font-extrabold text-white/50 line-through tabular-nums">
-                ₹45,000
-              </span>
-              <p className="font-display mt-1 text-[64px] leading-none font-black tracking-[-2px] text-[#F31C60] tabular-nums max-[680px]:text-[56px]">
-                ₹4,999
-              </p>
-              <p className="mt-2.5 text-[13.5px] text-white/55">
-                100% credited toward your turnkey execution invoice
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch">
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch">
               <button
                 type="button"
-                onClick={() => openBooking('audit')}
+                onClick={openEnquiry}
                 className="btn-pink btn-lg max-[680px]:w-full"
               >
-                <CalendarCheck size={18} weight="fill" aria-hidden="true" />
-                <span>Book Site Audit — ₹4,999</span>
+                <ChatCircleText size={18} weight="fill" aria-hidden="true" />
+                <span>Get a Free Quote</span>
               </button>
-              <button
-                type="button"
-                onClick={() => openBooking('visit')}
+              <a
+                href={CONTACT_INFO.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-ghost btn-lg max-[680px]:w-full"
               >
-                <Factory size={18} weight="fill" aria-hidden="true" />
-                <span>Tour Ambattur Factory Free</span>
-              </button>
+                <WhatsappLogo
+                  size={20}
+                  weight="fill"
+                  className="text-[#2FD47A]"
+                  aria-hidden="true"
+                />
+                <span>WhatsApp {CONTACT_INFO.phoneDisplay}</span>
+              </a>
             </div>
+
+            <p className="mt-5 text-[13.5px] text-white/50">
+              {CONTACT_INFO.addressLine1}, {CONTACT_INFO.addressLine2} · {CONTACT_INFO.hours}
+            </p>
           </div>
         </section>
       </main>
 
-      {/* BAND 14: DARK FOOTER */}
+      {/* BAND 14: DARK FOOTER WITH FULL REAL ADDRESS, PHONE, WHATSAPP & DIRECTIONS */}
       <footer className="w-full border-t border-white/10 bg-[#0A0A0A] py-14 text-white">
         <div className="container-main">
-          <div className="flex flex-wrap items-start justify-between gap-8 border-b border-white/10 pb-10">
-            <div className="max-w-[440px]">
+          <div className="flex flex-wrap items-start justify-between gap-10 border-b border-white/10 pb-10">
+            <div className="max-w-[480px]">
               <a
                 href="#top"
                 className="font-display inline-block text-[18px] font-black tracking-[-0.3px] text-white"
               >
-                <span className="text-[#F31C60]">K</span>ALAIGAR INTERIORS
+                <span className="text-[#F31C60]">M</span>N INTERIORS
               </a>
-              <p className="mt-3 text-[13.5px] leading-[1.65] text-white/60">
-                <strong className="text-white/85">Alwarpet Studio:</strong> No. 42, TTK Road,
-                Alwarpet, Chennai 600018
-                <br />
-                <strong className="text-white/85">Joinery Factory:</strong> Plot 19B, Ambattur
-                Industrial Estate, Chennai 600058
-              </p>
+
+              <div className="mt-4 space-y-2.5 text-[13.5px] leading-[1.6] text-white/65">
+                <p className="flex items-start gap-2.5">
+                  <MapPin
+                    size={16}
+                    weight="fill"
+                    className="mt-1 shrink-0 text-[#F31C60]"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    <strong className="text-white/90">Office &amp; Workshop:</strong>{' '}
+                    {CONTACT_INFO.addressLine1}, {CONTACT_INFO.addressLine2}
+                  </span>
+                </p>
+
+                <p className="flex items-center gap-2.5">
+                  <PhoneCall
+                    size={16}
+                    weight="fill"
+                    className="shrink-0 text-[#F31C60]"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    <a
+                      href={CONTACT_INFO.phoneHref}
+                      className="font-semibold text-white/90 tabular-nums hover:text-white"
+                    >
+                      {CONTACT_INFO.phoneDisplay}
+                    </a>{' '}
+                    <span className="text-white/40">({CONTACT_INFO.phoneLocal})</span>
+                  </span>
+                </p>
+
+                <p className="flex items-center gap-2.5">
+                  <Clock
+                    size={16}
+                    weight="fill"
+                    className="shrink-0 text-[#F31C60]"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    {CONTACT_INFO.hours} · 4.9 ★ Google Rated ({CONTACT_INFO.googleReviewsCount}{' '}
+                    Reviews)
+                  </span>
+                </p>
+              </div>
             </div>
 
             <nav aria-label="Footer navigation" className="flex flex-wrap items-center gap-6">
               <a
+                href="#our-work"
+                className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
+              >
+                Our Work
+              </a>
+              <a
                 href="#craftsmanship"
                 className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
               >
-                Craftsmanship
+                Why Us
               </a>
               <a
-                href="#craft-process"
+                href="#how-we-work"
                 className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
               >
-                6-Stage Process
+                How We Work
               </a>
               <a
-                href="#pricing"
+                href="#services"
                 className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
               >
-                Site Audit
+                What We Do
               </a>
               <a
-                href="#faq"
+                href="#reviews"
                 className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
               >
-                FAQ
+                Reviews
+              </a>
+              <a
+                href={CONTACT_INFO.mapsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
+              >
+                Google Maps
+              </a>
+              <a
+                href={CONTACT_INFO.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
+              >
+                WhatsApp
               </a>
               <button
                 type="button"
-                onClick={() => openBooking('visit')}
+                onClick={openEnquiry}
                 className="cursor-pointer text-[14px] font-medium text-white/70 transition-colors duration-150 hover:text-white"
               >
-                Visit Factory
+                Free Enquiry
               </button>
             </nav>
           </div>
 
           <div className="mt-7 flex flex-wrap items-center justify-between gap-4 text-[13px] text-white/40">
-            <p>© 2026 Kalaigar Interiors Pvt. Ltd., Chennai. Crafting Homes Since 2004.</p>
-            <p className="tabular-nums">Mon–Sat, 10:00 AM – 7:00 PM IST · Chennai, Tamil Nadu</p>
+            <p>© 2026 MN Interiors, Kundrathur, Kavanur, Chennai. Over 20 Years of Craftsmanship.</p>
+            <p>{CONTACT_INFO.website} · 10-Year Warranty</p>
           </div>
         </div>
       </footer>
 
       {/* FIXED 68PX STICKY BOTTOM CTA BAR */}
-      <StickyBottomBar onOpenBooking={openBooking} />
+      <StickyBottomBar onOpenEnquiry={openEnquiry} />
 
-      {/* INTERACTIVE BOOKING MODAL */}
+      {/* INTERACTIVE FREE ENQUIRY MODAL */}
       <BookingModal
         isOpen={modalOpen}
-        initialMode={modalMode}
+        initialScope={enquiryScope}
+        initialNote={enquiryNote}
         onClose={() => setModalOpen(false)}
       />
     </div>

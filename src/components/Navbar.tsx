@@ -1,18 +1,24 @@
-import { CalendarCheck } from '@phosphor-icons/react';
+import { ChatCircleText } from '@phosphor-icons/react';
+import { CONTACT_INFO } from '../data/content';
 
 interface NavbarProps {
-  onOpenBooking: (mode?: 'audit' | 'visit') => void;
+  onOpenEnquiry: () => void;
 }
 
-export function Navbar({ onOpenBooking }: NavbarProps) {
+export function Navbar({ onOpenEnquiry }: NavbarProps) {
   return (
     <>
-      {/* One-line dark announcement topbar */}
+      {/* One-line dark announcement topbar with real rating & clickable phone */}
       <div className="w-full bg-[#0A0A0A] px-4 py-[9px] text-center text-[13px] leading-[1.45] text-white/80">
         <span>
-          22+ YEARS OF MASTER JOINERY IN CHENNAI · ONLY 4 TURNKEY BUILD SLOTS OPEN THIS QUARTER —{' '}
+          20+ YEARS IN CHENNAI · 4.9 ★ GOOGLE RATED (71 REVIEWS) · KUNDRATHUR —{' '}
         </span>
-        <strong className="font-bold text-[#F31C60]">100% ADJUSTABLE SITE AUDIT FEE</strong>
+        <a
+          href={CONTACT_INFO.phoneHref}
+          className="font-bold text-[#F31C60] tabular-nums hover:underline"
+        >
+          CALL / WHATSAPP {CONTACT_INFO.phoneDisplay}
+        </a>
       </div>
 
       {/* 68px sticky blurred white nav: wordmark left, small pink CTA right, no menu links */}
@@ -21,18 +27,18 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
           <a
             href="#top"
             className="font-display shrink-0 whitespace-nowrap text-[18px] font-black tracking-[-0.3px] text-[#0A0A0A]"
-            aria-label="Kalaigar Interiors Chennai Home"
+            aria-label="MN Interiors Kundrathur Chennai Home"
           >
-            <span className="text-[#F31C60]">K</span>ALAIGAR INTERIORS
+            <span className="text-[#F31C60]">M</span>N INTERIORS
           </a>
 
           <button
             type="button"
-            onClick={() => onOpenBooking('audit')}
+            onClick={onOpenEnquiry}
             className="btn-pink btn-sm btn-nav-mobile"
           >
-            <CalendarCheck size={17} weight="fill" aria-hidden="true" />
-            <span>Book Site Audit — ₹4,999</span>
+            <ChatCircleText size={17} weight="fill" aria-hidden="true" />
+            <span>Get a Free Quote</span>
           </button>
         </div>
       </header>

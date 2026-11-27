@@ -2,6 +2,7 @@ export interface HeroStackRow {
   label: string;
   value: string;
   highlight?: boolean;
+  href?: string;
 }
 
 export interface StatItem {
@@ -52,15 +53,14 @@ export interface Testimonial {
   quote: string;
   name: string;
   role: string;
-  locality: string;
-  projectYear: string;
+  source: string;
   hot?: boolean;
 }
 
-export interface ValueRow {
+export interface EnquiryStepRow {
   item: string;
   detail: string;
-  value: string;
+  tag: string;
 }
 
 export interface FaqItem {
@@ -68,425 +68,553 @@ export interface FaqItem {
   answer: string;
 }
 
-export const MARQUEE_ITEMS: string[] = [
-  '22+ YEARS IN CHENNAI',
-  '640+ BESPOKE HOMES DELIVERED',
-  '18,000 SQ.FT AMBATTUR WORKSHOP',
-  '48 SALARIED MASTER CARPENTERS',
-  'BURMA TEAK & BWP 710 MARINE PLY',
-  'ZERO SUB-CONTRACTING',
-  '15-YEAR WRITTEN JOINERY WARRANTY',
-  'FIXED-DATE HANDOVER GUARANTEE',
-  'ALWARPET EXPERIENCE STUDIO',
+export type ShowcaseCategory =
+  | 'All Work'
+  | 'Kitchens'
+  | 'Wardrobes'
+  | 'Pooja & TV Units'
+  | 'Living & Shops';
+
+export interface ShowcaseItem {
+  id: string;
+  title: string;
+  category: Exclude<ShowcaseCategory, 'All Work'>;
+  area: string;
+  summary: string;
+  highlights: string[];
+  imageSrc: string;
+  imageAlt: string;
+  enquiryScope: string;
+  featured?: boolean;
+}
+
+export const SHOWCASE_CATEGORIES: ShowcaseCategory[] = [
+  'All Work',
+  'Kitchens',
+  'Wardrobes',
+  'Pooja & TV Units',
+  'Living & Shops',
 ];
 
-export const HERO_VALUE_STACK: HeroStackRow[] = [
-  { label: 'In-House Salaried Master Artisans', value: '48 CRAFTSMEN' },
-  { label: 'Chennai Villas & Homes Delivered', value: '640+ HOMES' },
-  { label: 'Owned Ambattur Carpentry Factory', value: '18,000 SQ.FT' },
-  { label: 'Coastal Moisture-Proof Core Spec', value: 'BWP 710 PLY' },
-  { label: 'Written Structural Joinery Warranty', value: '15 YEARS' },
-  { label: 'On-Site Laser Audit & 3D Blueprint', value: '₹4,999', highlight: true },
+// Tip: To display your own site photos later, simply replace the imageSrc path on any item below.
+export const WORK_SHOWCASE_ITEMS: ShowcaseItem[] = [
+  {
+    id: 'modular-kitchen',
+    title: 'Warm Wood & Matte Modular Kitchen',
+    category: 'Kitchens',
+    area: 'Kundrathur, Chennai',
+    summary:
+      'Spacious U-shaped family kitchen built for daily South Indian cooking, pairing warm wood-grain base cabinets with clean matte overhead storage, full loft units, and bright under-cabinet lighting.',
+    highlights: [
+      'Waterproof plywood cabinets suited for Chennai humidity',
+      'Full overhead loft storage with smooth soft-close drawers',
+      'Clean quartz counter with warm under-cabinet strip lighting',
+    ],
+    imageSrc: '/src/assets/images/mn_kitchen_showcase_1795762703455.jpg',
+    imageAlt:
+      'Modern Chennai modular kitchen with warm wood lower cabinets, matte cream upper units, loft storage, and warm under-cabinet lighting',
+    enquiryScope: 'Modular Kitchen',
+    featured: true,
+  },
+  {
+    id: 'tv-wall-display',
+    title: 'Backlit TV Feature Wall & Display Units',
+    category: 'Pooja & TV Units',
+    area: 'Porur, Chennai',
+    summary:
+      'Living room TV wall finished with a marble-look center panel, fluted warm wood side slats with concealed warm LED strips, floating console drawers, and lit glass display cabinets.',
+    highlights: [
+      'Warm vertical LED lighting concealed neatly inside wood slats',
+      'Tall glass-front display cabinets for idols & family decor',
+      'Floating wooden TV console with clutter-free cable routing',
+    ],
+    imageSrc: '/src/assets/images/mn_tv_wall_showcase_1795762706221.jpg',
+    imageAlt:
+      'Contemporary Chennai living room TV feature wall with fluted wood slats, warm LED lighting, marble backdrop, and lit glass display cabinets',
+    enquiryScope: 'Pooja Room / TV Unit',
+  },
+  {
+    id: 'carved-pooja-unit',
+    title: 'Decorative Peacock Pooja Unit',
+    category: 'Pooja & TV Units',
+    area: 'Kavanur, Chennai',
+    summary:
+      'Peaceful home pooja mandapam with matte double doors featuring traditional peacock and diya lattice cutouts, warm golden backlighting, handy storage drawer, and side glass niches for lamps.',
+    highlights: [
+      'Precision decorative peacock & diya lattice door work',
+      'Warm golden interior lighting highlighting brass lamps & idols',
+      'Bottom drawer storage for pooja essentials & daily convenience',
+    ],
+    imageSrc: '/src/assets/images/mn_pooja_unit_showcase_1795762706457.jpg',
+    imageAlt:
+      'South Indian home pooja room cabinet with pearl-grey decorative peacock lattice doors, warm wood frame, and lit side glass shelves',
+    enquiryScope: 'Pooja Room / TV Unit',
+  },
+  {
+    id: 'bedroom-wardrobe',
+    title: 'Full-Height Bedroom Wardrobes & Loft',
+    category: 'Wardrobes',
+    area: 'Anna Nagar, Chennai',
+    summary:
+      'Floor-to-ceiling bedroom wardrobes with seamless overhead loft storage, warm matte beige shutters accented by slim wood vertical trims, long easy-grip handles, and calm ceiling cove lighting.',
+    highlights: [
+      'Ceiling-height loft cabinets maximizing every inch of storage',
+      'Even door alignment with sturdy hinges that stay smooth for years',
+      'Warm matte finish paired with slim solid-wood accent trims',
+    ],
+    imageSrc: '/src/assets/images/mn_wardrobe_showcase_1795762706339.jpg',
+    imageAlt:
+      'Floor-to-ceiling bedroom wardrobe in matte beige with vertical wood trim accents, matching overhead loft storage, and warm ceiling cove light',
+    enquiryScope: 'Wardrobes & Bedrooms',
+  },
+  {
+    id: 'commercial-shop',
+    title: 'Modern Retail Shop & Display Interiors',
+    category: 'Living & Shops',
+    area: 'Chennai Commercial Project',
+    summary:
+      'Neat, welcoming commercial shop interior featuring a custom fluted-wood billing counter, illuminated built-in wall display shelves, clean ceiling spotlights, and organized floor layout.',
+    highlights: [
+      'Custom fluted-wood reception & billing counter built in-house',
+      'Warm lit wall shelving designed for attractive product display',
+      'Durable commercial finishing built for daily customer footfall',
+    ],
+    imageSrc: '/src/assets/images/mn_shop_interior_showcase_1795762707427.jpg',
+    imageAlt:
+      'Clean modern retail shop interior in Chennai with custom fluted wood counter, backlit wooden display shelves, and recessed ceiling spotlights',
+    enquiryScope: 'Shop / Commercial Interiors',
+  },
+];
+
+export const CONTACT_INFO = {
+  companyName: 'MN Interiors',
+  phoneDisplay: '+91 98403 84824',
+  phoneLocal: '098403 84824',
+  phoneHref: 'tel:+919840384824',
+  whatsappNumber: '919840384824',
+  whatsappHref:
+    'https://wa.me/919840384824?text=Hi%20MN%20Interiors%2C%20I%20would%20like%20to%20enquire%20about%20interior%20work%20in%20Chennai.',
+  mapsHref:
+    'https://www.google.com/maps/search/?api=1&query=MN+INTERIORS+No.16+Ganapathy+Nagar+1st+Street+Kundrathur+Kavanur+Chennai+600089',
+  addressLine1: 'No. 16, Ganapathy Nagar 1st Street, Sriperumbudur Main Road',
+  addressLine2: 'Kundrathur, Kavanur, Chennai, Tamil Nadu 600089',
+  hours: 'Open Daily · Closes 9:00 PM',
+  website: 'mninterior.in',
+  googleRating: '4.9',
+  googleReviewsCount: 71,
+} as const;
+
+export const MARQUEE_ITEMS: string[] = [
+  '20+ YEARS IN CHENNAI',
+  '4.9 ★ GOOGLE RATED (71 REVIEWS)',
+  'KUNDRATHUR, KAVANUR · CHENNAI 600089',
+  'OWN IN-HOUSE WORKSHOP',
+  '10-YEAR WARRANTY',
+  'HOMES, KITCHENS, WARDROBES & SHOPS',
+  'CALL OR WHATSAPP +91 98403 84824',
+  'FREE SITE VISIT & QUOTE',
+];
+
+export const HERO_SUMMARY_ROWS: HeroStackRow[] = [
+  { label: 'Experience Across Chennai', value: '20+ YEARS' },
+  { label: 'Google Rating (71 Reviews)', value: '4.9 ★' },
+  { label: 'Office & Own Workshop', value: 'KUNDRATHUR' },
+  { label: 'Quality & Service Promise', value: '10-YR WARRANTY' },
+  { label: 'Call or WhatsApp Directly', value: '98403 84824', href: CONTACT_INFO.phoneHref },
+  { label: 'Site Visit & Estimate', value: 'FREE', highlight: true },
 ];
 
 export const STATS_BAND: StatItem[] = [
-  { value: '22+', caption: 'Years Crafting Chennai Homes Since 2004', accent: false },
-  { value: '640+', caption: 'Bespoke Villas & Residences Handed Over', accent: true },
-  { value: '98.4%', caption: 'On-Time Handovers Across Two Decades', accent: false },
-  { value: '15 YR', caption: 'Written Structural & Joinery Warranty', accent: true },
+  { value: '20+', caption: 'Years of Interior Craftsmanship in Chennai', accent: false },
+  { value: '4.9 ★', caption: 'Google Rating Across 71 Verified Reviews', accent: true },
+  { value: '10 YR', caption: 'Warranty on Our Workmanship & Woodwork', accent: false },
+  { value: 'FREE', caption: 'Home Visit & Clear Written Estimate', accent: true },
 ];
 
 export const PROBLEM_POINTS: string[] = [
-  'Particle-board and cheap commercial ply swell and peel within three Chennai coastal monsoons.',
-  'Design apps outsource your home to rotating third-party labour crews who disappear after handover.',
-  'Lowball initial quotes balloon by 22% to 35% once hidden electrical, civil, and hardware extras hit.',
-  'Lopsided shutter gaps, sagging wardrobe hinges, and sloppy hand-brushed polish ruin expensive wood.',
-  'Endless 6-month delays force families to postpone Grihapravesham dates and pay extra rent.',
+  'Cheap boards swell, warp, or start peeling within a couple of Chennai summers and monsoons.',
+  'Many companies hand your home over to outside contractors who rush the work and disappear later.',
+  'Low initial quotes suddenly increase midway with surprise extra charges for basic items.',
+  'Crooked cabinet doors, loose hinges, and messy finishing spoil the look of a brand-new home.',
+  'Projects drag on for months past the promised date, delaying your housewarming and move-in.',
 ];
 
 export const SOLUTION_POINTS: string[] = [
-  '100% boiling-waterproof BWP 710 Gurjan marine ply & seasoned Burma teak built for Chennai salt air.',
-  '48 full-time salaried Kalaigar artisans working exclusively inside our own 18,000 sq.ft. Ambattur unit.',
-  'Line-by-line locked Material BOQ signed before work starts — zero surprise escalation bills.',
-  'Every kitchen and wardrobe dry-fitted at our factory to ±0.5mm laser tolerance before site delivery.',
-  'Contractual handover date backed by a daily delay-penalty clause in your favour.',
+  'We use strong, moisture-resistant plywood and trusted branded fittings suited for Chennai homes.',
+  'All major woodwork is crafted by our own experienced team at our workshop in Kundrathur.',
+  'You receive a clear, written quote upfront so you know exactly what you are paying for.',
+  'Every shutter, drawer, and corner is checked carefully for a smooth, neat, long-lasting finish.',
+  'We listen patiently to your ideas, welcome adjustments, and hand over cleanly on schedule.',
 ];
 
 export const CRAFT_PILLARS: CraftPillar[] = [
   {
-    id: 'joinery',
+    id: 'finishing',
     icon: 'hammer',
-    title: 'Mortise & Tenon Joinery',
-    body: 'Traditional South Indian wood joinery fused with German CNC precision. No rattling shutters, no loose screws, and zero sagging shelves even under heavy brassware.',
-    footnote: 'ENGINEERED FOR 25+ YEAR LOAD LIFE',
+    title: 'Neat, Long-Lasting Craftsmanship',
+    body: 'Over 20 years, we have earned our name through clean edges, properly aligned doors, and sturdy woodwork that still feels solid years after you move in.',
+    footnote: 'KNOWN ACROSS CHENNAI FOR 20+ YEARS',
     hot: true,
   },
   {
-    id: 'marine-ply',
+    id: 'weather-proof',
     icon: 'shield',
-    title: 'Coastal-Grade BWP 710 Core',
-    body: 'Chennai’s 85% sea-breeze humidity destroys MDF and HDHMR. We use authenticated IS:710 marine-grade Gurjan core with 2mm zero-line PUR edge banding on every panel.',
-    footnote: 'ZERO SWELLING OR DELAMINATION',
+    title: 'Made for Chennai Weather',
+    body: 'Heat, humidity, and heavy rains quickly ruin poor-quality boards. We choose reliable waterproof plywood and durable finishes that hold up season after season.',
+    footnote: 'NO SWELLING OR PEELING',
   },
   {
-    id: 'finishes',
+    id: 'smooth-finish',
     icon: 'sparkle',
-    title: '6-Coat Dust-Free Italian PU',
-    body: 'Book-matched natural veneers, aged Burma teak carvings, and six-stage Italian matte PU sprayed inside pressurized paint booths for a silk-smooth, museum-grade surface.',
-    footnote: 'HAND-RUBBED ARCHITECTURAL FINISH',
+    title: 'Clean, Smooth Finishes',
+    body: 'Whether you prefer warm wood tones, glossy laminates, or calm matte colours, we pay close attention to every corner, handle, and joint so nothing looks rushed.',
+    footnote: 'NEAT DETAIL IN EVERY ROOM',
   },
   {
     id: 'workshop',
     icon: 'factory',
-    title: 'Owned Ambattur Factory',
-    body: 'Walk into our 18,000 sq.ft. Ambattur Industrial Estate unit any weekday. Inspect the raw timber, German panel saws, and the exact craftsmen cutting your home.',
-    footnote: 'ZERO THIRD-PARTY SUB-CONTRACTORS',
+    title: 'Our Own Kundrathur Workshop',
+    body: 'Because we have our own workshop right in Kundrathur, Kavanur, we control the quality directly instead of outsourcing your furniture to random outside shops.',
+    footnote: 'DIRECT QUALITY CONTROL',
   },
   {
-    id: 'lighting',
+    id: 'practical-design',
     icon: 'lamp',
-    title: 'Architectural Lighting & Acoustics',
-    body: 'Warm 3000K recessed cove layers, plaster-in magnetic tracks, and concealed conduit routing engineered on CAD drawings before the first ceiling frame goes up.',
-    footnote: 'ZERO EXPOSED WIRES OR HARSH GLARE',
+    title: 'Flexible & Customer-Friendly',
+    body: 'We listen to your ideas, stay patient with changes, and adjust layouts based on your family’s comfort and budget—never forcing cookie-cutter templates on you.',
+    footnote: '4.9 ★ RATED BY 71 CLIENTS',
     hot: true,
   },
   {
-    id: 'supervision',
+    id: 'support',
     icon: 'ruler',
-    title: 'Senior Master Site Supervision',
-    body: 'A Kalaigar senior foreman with 12+ years tenure inspects your site every single morning with laser levels, moisture meters, and millimeter gap gauges.',
-    footnote: '±0.5MM FITMENT TOLERANCE',
+    title: '10-Year Warranty & Real Support',
+    body: 'We have been in Kundrathur for over two decades and we are not going anywhere. If a hinge needs adjustment or you need help later, we are one phone call away.',
+    footnote: '10-YEAR WARRANTY INCLUDED',
   },
 ];
 
 export const PROCESS_STAGES: ProcessStage[] = [
   {
     num: '01',
-    tabLabel: 'Site Audit',
-    title: 'LASER SITE AUDIT & MOISTURE CHECK',
+    tabLabel: 'Enquiry & Visit',
+    title: 'FREE SITE VISIT & DISCUSSION',
     description:
-      'Before drawing a single line, our principal designer and head carpenter visit your Chennai property with Leica laser scanners and wall-moisture meters. We audit plumbing lines, coastal dampness, sun orientation, and structural beams.',
-    outcomeTitle: 'STAGE 01 DELIVERABLE',
+      'Call, WhatsApp, or send us an enquiry and we will visit your home or shop anywhere in Chennai. We measure your rooms, listen to your ideas, and understand your budget.',
+    outcomeTitle: 'WHAT HAPPENS NEXT',
     outcomeText:
-      'Complete millimeter-accurate as-built floor plan, coastal dampness risk map, and realistic budget bracket within 72 hours.',
+      'You get honest advice on layouts, storage ideas, and what will work best for your space—with zero pressure to commit.',
     stats: [
-      { label: 'DURATION', value: '3 DAYS' },
-      { label: 'PRECISION', value: '±1.0MM' },
-      { label: 'SITE VISIT BY', value: 'SENIOR LEAD' },
+      { label: 'SITE VISIT', value: 'FREE' },
+      { label: 'COVERAGE', value: 'ALL CHENNAI' },
+      { label: 'OBLIGATION', value: 'NONE' },
     ],
     checklist: [
-      'Leica 3D laser measurement',
-      'Coastal wall dampness scan',
-      'Vaastu & daylight mapping',
-      'Electrical load & AC duct check',
-      'Structural beam clearance audit',
-      'Preliminary budget band review',
+      'Complete room measurements',
+      'Understanding your daily needs',
+      'Storage & layout suggestions',
+      'Budget-friendly options',
+      'Honest timeline discussion',
+      'Direct talk with our team',
     ],
   },
   {
     num: '02',
-    tabLabel: '3D & Material Lab',
-    title: '3D WALKTHROUGH & PHYSICAL MATERIAL BOX',
+    tabLabel: 'Design & Samples',
+    title: 'CHOOSE YOUR DESIGN & FINISHES',
     description:
-      'At our Alwarpet Experience Studio, you touch the exact veneer sheets, solid teak samples, quartz slabs, and Blum/Hettich hardware going into your home. We lock every photorealistic elevation and itemised line-by-line BOQ.',
-    outcomeTitle: 'STAGE 02 DELIVERABLE',
+      'We plan the look of each room and help you pick colours, laminates, wood shades, handles, and hardware by seeing real physical samples—and we stay flexible as you refine your choices.',
+    outcomeTitle: 'WHAT YOU GET',
     outcomeText:
-      'Signed, fixed-price Master BOQ and physical Material Approval Board — every plank, hinge, and finish locked with zero hidden clauses.',
+      'A clear picture of how your kitchen, wardrobes, TV unit, and pooja room will look before any work begins.',
     stats: [
-      { label: 'DURATION', value: '12 DAYS' },
-      { label: 'COST VARIANCE', value: '0% LOCKED' },
-      { label: 'STUDIO REVIEWS', value: 'ALWARPET' },
+      { label: 'SAMPLES', value: 'TOUCH & SEE' },
+      { label: 'CHANGES', value: 'FLEXIBLE' },
+      { label: 'STYLE', value: 'YOUR CHOICE' },
     ],
     checklist: [
-      'Full 3D room-by-room renders',
-      'Curated physical material box',
-      'Lighting & false ceiling CAD',
-      'Custom kitchen ergonomic plan',
-      'Hardware & appliance specs',
-      'Zero-escalation signed BOQ',
+      'Kitchen layout & storage plan',
+      'Wardrobe internal shelf layout',
+      'Real colour & finish samples',
+      'Lighting & false ceiling ideas',
+      'Pooja unit & living room plan',
+      'Easy revisions until happy',
     ],
   },
   {
     num: '03',
-    tabLabel: 'Factory Joinery',
-    title: 'IN-HOUSE AMBATTUR WORKSHOP FABRICATION',
+    tabLabel: 'Clear Quote',
+    title: 'TRANSPARENT WRITTEN ESTIMATE',
     description:
-      'All carcasses, fluted teak panels, pooja mandapam carvings, and wardrobe shutters are milled inside our 18,000 sq.ft. Ambattur factory. You are invited for a live dry-fit inspection before a single board is packed for your home.',
-    outcomeTitle: 'STAGE 03 DELIVERABLE',
+      'Once you like the plan and materials, we give you a clear, room-by-room quote. Every material, hardware brand, and finish is written down simply so there are no surprises later.',
+    outcomeTitle: 'OUR PROMISE',
     outcomeText:
-      'Factory-inspected, dust-free PU-finished millwork dry-assembled and numbered room-by-room for clean site installation.',
+      'No hidden costs and no sudden price jumps halfway through the project. Everything stays clear and upfront.',
     stats: [
-      { label: 'DURATION', value: '4 WEEKS' },
-      { label: 'FACTORY AREA', value: '18,000 SF' },
-      { label: 'FINISH COATS', value: '6-COAT PU' },
+      { label: 'QUOTE FORMAT', value: 'ROOM-WISE' },
+      { label: 'HIDDEN FEES', value: 'ZERO' },
+      { label: 'PAYMENTS', value: 'STAGE-WISE' },
     ],
     checklist: [
-      'IS:710 BWP marine ply cutting',
-      '2mm German PUR edge sealing',
-      'Hand-carved solid teak accents',
-      'Pressurized matte PU booth',
-      'Full factory dry-fit trial',
-      'Client workshop walkthrough',
+      'Room-by-room price breakdown',
+      'Clear plywood & finish details',
+      'Hardware brands clearly listed',
+      'Agreed start & finish dates',
+      'Comfortable stage-wise payments',
+      '10-year warranty terms included',
     ],
   },
   {
     num: '04',
-    tabLabel: 'MEP & Ceiling',
-    title: 'PARALLEL SITE CIVIL, ELECTRICAL & CEILING',
+    tabLabel: 'Workshop Build',
+    title: 'CRAFTED IN OUR KUNDRATHUR WORKSHOP',
     description:
-      'While your woodwork is crafted in Ambattur, our in-house electrical, plumbing, tiling, and gypsum ceiling teams prepare your shell. Zero dust contamination between wet civil works and fine timber finishes.',
-    outcomeTitle: 'STAGE 04 DELIVERABLE',
+      'We build your woodwork carefully at our own workshop on Sriperumbudur Main Road in Kundrathur. Making the pieces in our workshop ensures cleaner cutting, neater edges, and far less mess inside your home.',
+    outcomeTitle: 'WHY IT MATTERS',
     outcomeText:
-      'Pressure-tested plumbing, concealed copper AC lines, laser-levelled gypsum coves, and primed walls ready for precision millwork.',
+      'Better finish quality, steady progress, and you are always welcome to drop by Kundrathur to see your work taking shape.',
     stats: [
-      { label: 'DURATION', value: '3 WEEKS' },
-      { label: 'WIRING SPEC', value: 'FR-LSH' },
-      { label: 'SITE LOGS', value: 'WEEKLY' },
+      { label: 'WORKSHOP', value: 'KUNDRATHUR' },
+      { label: 'CONTROL', value: 'IN-HOUSE' },
+      { label: 'SITE MESS', value: 'MINIMAL' },
     ],
     checklist: [
-      'Concealed electrical & data runs',
-      'Saint-Gobain gypsum false ceilings',
-      'Waterproofing & stone cladding',
-      'Recessed magnetic light tracks',
-      'Wall punning & royal primer',
-      'Weekly WhatsApp photo audit',
+      'Carefully selected quality plywood',
+      'Clean machine & hand finishing',
+      'Proper edge sealing against damp',
+      'Branded hinges & drawer channels',
+      'Checked before leaving workshop',
+      'Regular progress updates to you',
     ],
   },
   {
     num: '05',
-    tabLabel: 'Precision Fitment',
-    title: 'WHITE-GLOVE ON-SITE INSTALLATION',
+    tabLabel: 'Home Fitment',
+    title: 'NEAT & CAREFUL INSTALLATION',
     description:
-      'Because 90% of the heavy cutting and spraying happens in our factory, on-site installation is quiet, clean, and surgical. Our master carpenters align every shutter reveal to ±0.5mm and calibrate every soft-close runner.',
-    outcomeTitle: 'STAGE 05 DELIVERABLE',
+      'Our team brings the finished units to your home and installs everything with care. We protect your flooring, align every door and drawer properly, and check every detail before wrapping up.',
+    outcomeTitle: 'WHAT YOU SEE',
     outcomeText:
-      'Flawless, gap-calibrated cabinetry, seamless quartz mitre joints, and fully commissioned warm architectural lighting.',
+      'Smooth-opening drawers, straight cabinet lines, clean corners, and a spotless space ready for your family.',
     stats: [
-      { label: 'DURATION', value: '2 WEEKS' },
-      { label: 'REVEAL GAP', value: '±0.5MM' },
-      { label: 'CHECKPOINTS', value: '140 POINTS' },
+      { label: 'FITMENT', value: 'NEAT & CLEAN' },
+      { label: 'FLOOR CARE', value: 'PROTECTED' },
+      { label: 'FINAL CHECK', value: 'EVERY DOOR' },
     ],
     checklist: [
-      'Protective floor sheet laydown',
-      'Laser-aligned shutter calibration',
-      'Blum & Hettich load testing',
-      'Granite & quartz mitre sealing',
-      'Brass hardware & mirror mount',
-      '140-point snag inspection',
+      'Careful handling of your tiles',
+      'Straight, even door alignment',
+      'Smooth soft-close drawer check',
+      'Neat electrical & light cutouts',
+      'Final touch-ups & polishing',
+      'Thorough walk-through with you',
     ],
   },
   {
     num: '06',
     tabLabel: 'Handover & Care',
-    title: 'DEEP-CLEAN HANDOVER & 15-YEAR WARRANTY',
+    title: 'ON-TIME HANDOVER & 10-YEAR WARRANTY',
     description:
-      'We hand over a spotless, move-in-ready home before your Grihapravesham date alongside your bound 15-Year Written Structural Warranty, as-built electrical schematics, and a complimentary 6-month hinge re-tuning visit.',
-    outcomeTitle: 'STAGE 06 DELIVERABLE',
+      'We hand over your ready home on schedule along with our 10-year warranty. Even years later, if a door needs tightening or you want to add a new unit, you know right where to find us in Kundrathur.',
+    outcomeTitle: 'PEACE OF MIND',
     outcomeText:
-      'Guaranteed on-time key handover, signed 15-year structural warranty certificate, and direct hotline to our Ambattur service desk.',
+      'A beautiful home built by people who stand behind their work long after the keys are handed over.',
     stats: [
-      { label: 'WARRANTY', value: '15 YEARS' },
-      { label: 'FREE TUNE-UP', value: '6 MONTHS' },
-      { label: 'ON-TIME RATE', value: '98.4%' },
+      { label: 'WARRANTY', value: '10 YEARS' },
+      { label: 'AFTER-CARE', value: 'DIRECT CALL' },
+      { label: 'RATING', value: '4.9 ★ GOOGLE' },
     ],
     checklist: [
-      'Industrial deep cleaning',
-      'Signed 15-year warranty bond',
-      'As-built MEP drawing dossier',
-      'Teak & stone care manual',
-      '6-month complimentary tune-up',
-      'Direct Chennai service hotline',
+      'Ready before your move-in date',
+      'Clean, dust-free handover',
+      '10-year warranty coverage',
+      'Easy care & cleaning tips',
+      'Quick help for future tweaks',
+      'Local Kundrathur team support',
     ],
   },
 ];
 
 export const COMPARISON_BEFORE: string[] = [
-  'Outsourced freelance carpenters with zero long-term accountability',
-  'MDF, particle board & commercial ply that swell in Chennai humidity',
-  'Low teaser quotes followed by 25–35% mid-project cost escalations',
-  'Dusty on-site hand polishing that leaves brush marks and uneven sheen',
-  'Vague 1-year "service warranties" packed with fine-print exclusions',
-  'No own workshop — just a shiny showroom acting as a middleman',
+  'Work handed off to random outside contractors with uneven quality',
+  'Low-grade boards that swell, sag, or peel after a couple of monsoons',
+  'Sweet initial quotes followed by unexpected extra charges mid-way',
+  'Rushed finishing with crooked doors, loose hinges, and visible gaps',
+  'Missed deadlines that upset your move-in or housewarming plans',
+  'Hard to reach for repairs or adjustments once final payment is made',
 ];
 
 export const COMPARISON_AFTER: string[] = [
-  '48 full-time salaried Kalaigar artisans — many with us 10 to 18 years',
-  'Authenticated IS:710 BWP marine-grade Gurjan ply & seasoned Burma teak',
-  'Itemised, fixed-price Master BOQ locked before a single nail is driven',
-  '18,000 sq.ft. Ambattur factory with CNC precision & dust-free PU booths',
-  '15-Year written structural joinery warranty + 6-month free tune-up',
-  'Direct founder & senior foreman accountability from audit to handover',
+  '20+ years of trusted craftsmanship done by our own dedicated team',
+  'Strong, moisture-resistant materials chosen for Chennai’s climate',
+  'Clear, room-by-room written estimate tailored to your budget',
+  'Careful workshop finishing and neat alignment checked in every room',
+  'Patient, flexible team that listens to your ideas and finishes on time',
+  '10-year warranty backed by our permanent presence in Kundrathur',
 ];
 
 export const SIGNATURE_ROOMS: RoomScope[] = [
   {
     icon: 'cooking',
-    tag: 'MOST COMMISSIONED',
-    title: 'Marine-Grade & Solid Wood Kitchens',
-    body: 'Heavy-duty Indian cooking kitchens engineered with BWP 710 carcasses, Blum Legrabox drawers, mitred quartz islands, and stainless steel cutlery systems.',
-    spec: 'BUILT FOR HEAVY SOUTH INDIAN COOKING',
+    tag: 'MOST POPULAR',
+    title: 'Modular & Custom Kitchens',
+    body: 'Sturdy, easy-to-clean kitchens built for everyday South Indian cooking—with smart pull-out baskets, tall storage units, and smooth drawers that handle heavy vessels easily.',
+    spec: 'WATERPROOF & EASY TO MAINTAIN',
     hot: true,
   },
   {
     icon: 'door',
-    tag: 'PRECISION JOINERY',
-    title: 'Walk-In & Fluted Teak Wardrobes',
-    body: 'Floor-to-ceiling wardrobes with fluted Burma teak, lacquered acoustic glass, motion-triggered warm strip lighting, and velvet jewellery organisers.',
-    spec: 'BLUM & HETTICH SOFT-CLOSE HARDWARE',
+    tag: 'CUSTOM STORAGE',
+    title: 'Wardrobes & Bedroom Units',
+    body: 'Sliding or hinged wardrobes, loft storage, dressing tables, and study desks custom-sized to fit your bedroom walls neatly without wasting an inch of space.',
+    spec: 'SMOOTH DOORS & SMART STORAGE',
   },
   {
     icon: 'temple',
-    tag: 'HERITAGE ARTISTRY',
-    title: 'Hand-Carved Pooja Mandapams',
-    body: 'Traditional Chettinad and temple-proportioned Burma teak pooja sanctuaries with custom bell-metal brass inlays, concealed diya exhaust, and Vaastu alignment.',
-    spec: 'CARVED BY 3RD-GEN ARTISANS',
+    tag: 'TRADITIONAL & MODERN',
+    title: 'Pooja Rooms & Mandapams',
+    body: 'Peaceful, thoughtfully crafted pooja units with decorative laser-cut or wooden doors, warm lighting, and neat display shelves for idols, lamps, and pooja essentials.',
+    spec: 'CRAFTED WITH CARE & DETAIL',
   },
   {
     icon: 'armchair',
-    tag: 'COMPLETE TURNKEY',
-    title: 'Living, Dining & Full Villa Builds',
-    body: 'Architectural wall panelling, Italian marble TV plinths, bespoke solid-wood dining tables, cane-webbed accent consoles, and layered false-ceiling lighting.',
-    spec: 'SINGLE-TEAM END-TO-END EXECUTION',
+    tag: 'HOMES & SHOPS',
+    title: 'TV Units, Living & Shop Interiors',
+    body: 'TV feature walls with warm lighting, crockery cabinets, foyer shoe racks, false ceilings, complete home interiors, and neat, well-organized commercial shop interiors.',
+    spec: 'RESIDENTIAL & COMMERCIAL',
   },
 ];
 
 export const CHENNAI_BENCHMARKS: ProjectBenchmark[] = [
   {
-    location: 'BOAT CLUB ROAD, CHENNAI',
-    title: 'THE COURTYARD TEAK RESIDENCE',
-    meta: '5,400 SQ.FT · 14 WEEKS · FULL TURNKEY',
+    location: 'KUNDRATHUR & KAVANUR',
+    title: 'COMPLETE FAMILY HOME INTERIORS',
+    meta: 'KITCHEN, WARDROBES, TV WALL & POOJA UNIT',
     summary:
-      'Double-height solid Burma teak slatted wall, brass-inlaid foyer console, bespoke Chettinad pooja mandapam, and dual wet/dry Italian marble kitchens crafted end-to-end.',
-    result: 'HANDED OVER 4 DAYS AHEAD OF SCHEDULE',
+      'Custom modular kitchen, bedroom wardrobes with loft storage, warm backlit living room TV unit with glass display shelves, and a decorative carved pooja mandapam.',
+    result: 'COMPLETED NEATLY AS PROMISED',
     hot: true,
   },
   {
-    location: 'ADYAR SEA-FACING PENTHOUSE',
-    title: 'COASTAL OAK & GLASS SANCTUARY',
-    meta: '3,200 SQ.FT · 10 WEEKS · TURNKEY MILLWORK',
+    location: 'PORUR & WEST CHENNAI',
+    title: 'PRACTICAL 3BHK APARTMENT',
+    meta: 'FULL HOME INTERIORS · DESIGNED TO BUDGET',
     summary:
-      'Engineered 400 metres from the Bay of Bengal using sealed IS:710 marine carcasses, fluted oak ceiling acoustic baffles, and stainless-316 coastal hardware throughout.',
-    result: 'ZERO WARPING ACROSS 6 CHENNAI MONSOONS',
+      'Bright, practical interior design planned carefully around the family’s budget—with durable plywood cabinets, smooth matte finishes, and smart storage in every room.',
+    result: '100% WITHIN AGREED BUDGET',
   },
   {
-    location: 'ANNA NAGAR EAST VILLA',
-    title: 'THREE-GENERATION FAMILY BUNGALOW',
-    meta: '4,100 SQ.FT · 12 WEEKS · BARE SHELL TO KEYS',
+    location: 'CHENNAI COMMERCIAL SPACE',
+    title: 'NEAT & ORGANIZED SHOP INTERIORS',
+    meta: 'CUSTOM DISPLAYS, COUNTERS & LIGHTING',
     summary:
-      'Complete architectural interior build featuring 6-coat Italian matte PU wardrobes, concealed teak home library, ergonomic senior-friendly bathrooms, and island kitchen.',
-    result: '₹0 COST OVERRUN ON SIGNED MASTER BOQ',
+      'Full commercial shop interior built for daily customer footfall—clean counters, organized shelving, attractive lighting, and durable finishing delivered right on schedule.',
+    result: 'RATED 5 ★ FOR WORKMANSHIP',
   },
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      'Kalaigar built our Poes Garden villa interiors in 2016. Ten Chennai summers later, every single Burma teak shutter and kitchen drawer glides like day one. When our daughter bought her apartment in Adyar last year, we did not even call a second designer.',
-    name: 'Dr. Rajeshwar & Meenakshi Subramanian',
-    role: 'Homeowners · Two Commissioned Homes',
-    locality: 'Poes Garden & Adyar, Chennai',
-    projectYear: '2016 & 2025',
+      'I am extremely happy and satisfied with the work done by the MN Interiors team for my home. They have done a wonderful job, paying attention to the details and ensuring that the final outcome reflects my expectations. What I particularly appreciate is their flexibility and willingness to listen to my ideas, accommodate changes, and make adjustments based on my comfort and preferences. Thank you for making my house feel more like a home!',
+    name: 'Divya',
+    role: 'Homeowner · Home Interiors',
+    source: 'Verified 5 ★ Google Review',
     hot: true,
   },
   {
     quote:
-      'Visiting their Ambattur workshop sealed our decision. Watching their senior carpenters dry-fit our entire pooja mandapam and walk-in wardrobe before a single truck arrived at Besant Nagar gave us complete peace of mind. Not one rupee over the signed BOQ.',
-    name: 'Karthik Balasubramanian',
-    role: 'Managing Director · Independent Villa',
-    locality: 'Besant Nagar, Chennai',
-    projectYear: '2024',
+      'We are extremely happy with the interior work done for our shop with M.N Interiors. The workmanship, finishing, and overall design were excellent. The team was professional, friendly, and cooperative throughout the project. They understood our requirements and delivered the work beautifully. The shop looks neat, attractive, and well-organized. Highly recommended for anyone looking for quality interior work!',
+    name: 'R&D Enterprises',
+    role: 'Commercial Shop Interiors',
+    source: 'Verified 5 ★ Google Review',
   },
   {
     quote:
-      'After a terrible contractor experience on our first flat, Kalaigar felt like working with precision engineers. Daily laser checks, dust-free PU finishes, and they handed over our keys three days before our Grihapravesham.',
-    name: 'Priya & Anand Narayanan',
-    role: '3BHK Residence Owners',
-    locality: 'Anna Nagar West, Chennai',
-    projectYear: '2025',
+      'I recently got my home interiors done by M.N. Interiors, and I’m really happy with the overall work. The design, finishing, material quality, and execution were all very good. The team was professional, responsive, and completed the work neatly as promised. They understood our requirements well and gave a beautiful, practical design within our budget. Highly recommended!',
+    name: 'Praveen Civil',
+    role: 'Homeowner · Full Home Interiors',
+    source: 'Verified 5 ★ Google Review',
   },
 ];
 
-export const AUDIT_VALUE_ROWS: ValueRow[] = [
+export const ENQUIRY_STEPS: EnquiryStepRow[] = [
   {
-    item: 'On-Site Leica Laser Measure & Dampness Scan',
-    detail: 'Senior designer + head carpenter visit anywhere in Chennai',
-    value: '₹6,000',
+    item: 'Free Home or Shop Visit & Measurements',
+    detail: 'Our team visits your apartment, house, or shop anywhere in Chennai at your convenience.',
+    tag: 'INCLUDED',
   },
   {
-    item: '2D Architectural Space Plan & Vaastu Review',
-    detail: 'Two layout iterations optimised for light, breeze, and storage',
-    value: '₹12,000',
+    item: 'Practical Layout & Storage Ideas',
+    detail: 'Honest suggestions on how to make the most of your kitchen, bedrooms, and living room.',
+    tag: 'INCLUDED',
   },
   {
-    item: 'Physical Craftsmanship Material Box',
-    detail: 'IS:710 BWP ply, Burma teak, natural veneer, PU & hardware samples',
-    value: '₹8,000',
+    item: 'Touch & Feel Material Samples',
+    detail: 'See real plywood, laminate, finish colours, and hardware options before deciding.',
+    tag: 'INCLUDED',
   },
   {
-    item: 'Key-Room 3D Concepts & Ceiling Lighting Layout',
-    detail: 'Living, kitchen, and master suite elevations with fixture map',
-    value: '₹14,000',
+    item: 'Clear, Room-by-Room Written Quote',
+    detail: 'Simple pricing broken down clearly by room with no confusing terms or hidden fees.',
+    tag: 'INCLUDED',
   },
   {
-    item: 'Line-by-Line Locked Material & Execution BOQ',
-    detail: 'Transparent per-sq.ft pricing with brand specs & handover timeline',
-    value: '₹5,000',
+    item: 'Realistic Start-to-Handover Schedule',
+    detail: 'An honest timeline planned around your family’s move-in or housewarming date.',
+    tag: 'INCLUDED',
   },
 ];
 
-export const AUDIT_CHECKLIST: string[] = [
-  '100% credited into your turnkey build invoice',
-  'Private walkthrough of our 18,000 sq.ft. Ambattur workshop',
-  'Zero obligation to proceed after receiving your full BOQ',
-  'Delivered within 10 working days of site measurement',
-  'Direct review session with Principal Craftsman S. Sundararajan',
+export const ENQUIRY_CHECKLIST: string[] = [
+  '100% free consultation and site visit across Chennai',
+  'Call or WhatsApp directly at +91 98403 84824',
+  'Visit our Kundrathur, Kavanur workshop open till 9:00 PM',
+  'Clear written quote tailored to your rooms and budget',
+  'Backed by our 10-year warranty & 4.9 ★ Google rating',
 ];
 
 export const FAQS: FaqItem[] = [
   {
-    question: 'Can we inspect your Ambattur carpentry workshop before paying anything?',
+    question: 'Where is MN Interiors located, and which areas of Chennai do you cover?',
     answer:
-      'Yes — we actively encourage it. You can schedule a free weekday or Saturday tour of our 18,000 sq.ft. Ambattur Industrial Estate workshop and our Alwarpet Experience Studio. You will see live projects in fabrication, our Italian PU spray booths, raw IS:710 marine plywood stacks, and our salaried master carpenters at work.',
+      'Our office and workshop are located at No. 16, Ganapathy Nagar 1st Street, Sriperumbudur Main Road, Kundrathur, Kavanur, Chennai 600089 (open daily until 9:00 PM). We take up residential and shop interior projects across all parts of Chennai.',
   },
   {
-    question: 'What is the realistic turnkey budget for a 3BHK apartment or villa in Chennai?',
+    question: 'How can I contact you directly for a quick enquiry?',
     answer:
-      'Because we use authenticated IS:710 BWP marine ply, German hardware (Blum/Hettich), and 6-coat factory PU or natural teak veneer, full turnkey 3BHK residences typically range between ₹16 Lakhs and ₹32 Lakhs depending on square footage and solid wood scope. Independent villas typically start at ₹35 Lakhs. Your ₹4,999 Site Audit produces an exact, line-by-line locked BOQ before you commit.',
+      'You can call or WhatsApp us directly on +91 98403 84824 (098403 84824), or click any "Get a Free Quote" button on this page to send us your details. We will get back to you promptly.',
   },
   {
-    question: 'How does your woodwork withstand Chennai’s coastal humidity, heat, and termites?',
+    question: 'Is the site visit and estimate really free?',
     answer:
-      'Over 22 years across Adyar, Besant Nagar, and ECR, we eliminated every weak material. We never use MDF or particle board in kitchens, vanities, or damp-prone walls. We build strictly with boiling-waterproof BWP 710 Gurjan core, vacuum-treated seasoned timber, 2mm German PUR waterproof edge sealing, and SS-304/316 hardware in sea-facing homes.',
+      'Yes, completely free. We will visit your site anywhere in Chennai, take measurements, discuss your ideas and budget, and share a clear room-wise estimate with zero obligation.',
   },
   {
-    question: 'What happens to the ₹4,999 Site Audit fee if we hire Kalaigar for execution?',
+    question: 'Do you handle both home interiors and commercial shops?',
     answer:
-      'Every single rupee of the ₹4,999 Site Audit fee is 100% deducted from your first execution milestone invoice. If you decide not to build with us after receiving your laser floor plans, 3D concepts, and itemised BOQ, you keep every drawing and specification with zero obligation.',
+      'Yes! We handle complete home interiors (2BHK, 3BHK, independent houses), individual requirements like modular kitchens, wardrobes, TV units, and pooja rooms, as well as neat, well-organized shop and commercial interiors.',
   },
   {
-    question: 'Do you outsource carpentry or painting to local daily-wage sub-contractors?',
+    question: 'What does your 10-year warranty cover?',
     answer:
-      'Never. Outsourced labour is the #1 reason Chennai interior projects suffer delays and sloppy joints. All 48 carpenters, polishers, CNC operators, and senior site supervisors are full-time salaried Kalaigar employees—our average craftsman tenure is 11 years.',
+      'Our 10-year warranty covers workmanship and core woodwork against manufacturing defects, peeling, or structural issues under normal use. Since we are permanently based in Kundrathur, you can reach us easily whenever you need support.',
   },
   {
-    question: 'How long does a full turnkey interior build take from approval to handover?',
+    question: 'Can we visit your workshop in Kundrathur before finalizing?',
     answer:
-      'A standard 3BHK apartment takes 9 to 11 weeks from design & material sign-off to deep-cleaned handover. Independent villas take 12 to 16 weeks depending on civil and custom Burma teak carving scope. Every project carries a contractual handover date backed by a delay-penalty clause.',
-  },
-  {
-    question: 'Do you undertake custom Burma teak pooja rooms and heritage bungalow renovations?',
-    answer:
-      'Yes — custom solid-wood joinery and heritage renovations are what built our reputation in Mylapore, Boat Club, and Alwarpet since 2004. Our third-generation woodcarvers craft traditional Chettinad pillars, brass-inlaid pooja doors, and restoration millwork right inside our Ambattur unit.',
+      'Of course! We welcome families and business owners to visit us at No. 16, Ganapathy Nagar 1st Street, Sriperumbudur Main Road, Kundrathur, Kavanur. Seeing live work in progress and touching the finishes yourself is the best way to judge our craftsmanship.',
   },
 ];
 
 export const CHENNAI_LOCALITIES: string[] = [
-  'Alwarpet / Boat Club / Poes Garden',
+  'Kundrathur / Kavanur / Mangadu / Gerugambakkam',
+  'Porur / Iyyappanthangal / Valasaravakkam',
+  'Tambaram / Chromepet / Pallavaram',
+  'Anna Nagar / Mogappair / Ambattur',
+  'Velachery / Madipakkam / Medavakkam',
   'Adyar / Besant Nagar / Thiruvanmiyur',
-  'Anna Nagar / Kilpauk / Shenoy Nagar',
-  'Nungambakkam / Mylapore / Gopalapuram',
-  'ECR (Neelankarai / Injambakkam / Akkarai)',
-  'OMR / Velachery / Perungudi',
-  'Porur / Mogappair / Ambattur',
-  'Other Chennai Locality',
+  'T. Nagar / Alwarpet / Mylapore',
+  'OMR / ECR',
+  'Other Area in Chennai',
 ];
