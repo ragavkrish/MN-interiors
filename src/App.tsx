@@ -21,6 +21,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import { BookingModal } from './components/BookingModal';
+import CountUp from './components/CountUp';
 import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ProcessStepper } from './components/ProcessStepper';
@@ -43,6 +44,7 @@ import {
   type CraftPillar,
   type RoomScope,
 } from './data/content';
+import { useScrollReveal } from './lib/useScrollReveal';
 
 function PillarIcon({ icon }: { icon: CraftPillar['icon'] }) {
   switch (icon) {
@@ -79,6 +81,8 @@ export default function App() {
   const [enquiryScope, setEnquiryScope] = useState('Full Home Interiors');
   const [enquiryNote, setEnquiryNote] = useState('');
 
+  useScrollReveal();
+
   const openEnquiry = () => {
     setEnquiryScope('Full Home Interiors');
     setEnquiryNote('');
@@ -104,8 +108,8 @@ export default function App() {
         {/* BAND 2: WHITE 4-UP STATS STRIP */}
         <section className="w-full border-b border-[#E6E6E6] bg-white">
           <div className="container-main">
-            <div className="stats-grid">
-              {STATS_BAND.map((stat) => (
+            <div className="stats-grid" data-reveal-group>
+              {STATS_BAND.map((stat, i) => (
                 <div
                   key={stat.caption}
                   className="stats-cell px-6 py-10 text-center max-[680px]:px-4 max-[680px]:py-7"
@@ -115,7 +119,11 @@ export default function App() {
                       stat.accent ? 'text-[#F31C60]' : 'text-[#0A0A0A]'
                     }`}
                   >
-                    {stat.value}
+                    {stat.count ? (
+                      <CountUp {...stat.count} delay={i * 80} />
+                    ) : (
+                      stat.value
+                    )}
                   </p>
                   <p className="mx-auto mt-2 max-w-[210px] text-[13.5px] leading-[1.45] text-[#666666]">
                     {stat.caption}
@@ -132,7 +140,7 @@ export default function App() {
         {/* BAND 3: DARK PROBLEM VS SOLUTION + PULL-QUOTE */}
         <section className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[760px] text-center">
+            <div className="mx-auto max-w-[760px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 WHY EXPERIENCE MATTERS
               </p>
@@ -147,7 +155,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-split mt-12">
+            <div className="grid-split mt-12" data-reveal-group>
               {/* Left: Problem List with Cross Badges */}
               <div className="space-y-3">
                 <p className="mb-4 text-[11px] font-semibold tracking-[0.18em] text-white/50 uppercase">
@@ -204,7 +212,7 @@ export default function App() {
         {/* BAND 4: WHITE CRAFTSMANSHIP PILLARS (3-UP GRID, ONE HOT CARD PER GROUP OF 3) */}
         <section id="craftsmanship" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 WHAT WE ARE KNOWN FOR
               </p>
@@ -219,7 +227,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12" data-reveal-group>
               {CRAFT_PILLARS.map((pillar) => {
                 const isHot = Boolean(pillar.hot);
                 return (
@@ -279,7 +287,7 @@ export default function App() {
         {/* BAND 6: DARK COMPARISON PAIR (WHITE BEFORE VS INK 2 2PX PINK WINNER) */}
         <section className="band-section w-full border-t border-white/10 bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 THE DIFFERENCE IS CLEAR
               </p>
@@ -294,7 +302,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-2 mt-12">
+            <div className="grid-2 mt-12" data-reveal-group>
               {/* Left: Before Card (White with Mist Gray Tag) */}
               <div className="rounded-[16px] border border-[#E6E6E6] bg-white p-[34px] text-[#0A0A0A] max-[680px]:p-[24px]">
                 <span className="inline-block rounded-[6px] bg-[#F4F4F4] px-[10px] py-[6px] text-[11px] font-bold tracking-[0.16em] text-[#666666] uppercase">
@@ -341,7 +349,7 @@ export default function App() {
         {/* BAND 7: WHITE SIGNATURE ROOMS 4-UP GRID */}
         <section id="services" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 WHAT WE DO
               </p>
@@ -356,7 +364,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-4 mt-12">
+            <div className="grid-4 mt-12" data-reveal-group>
               {SIGNATURE_ROOMS.map((room) => {
                 const isHot = Boolean(room.hot);
                 return (
@@ -411,7 +419,7 @@ export default function App() {
         {/* BAND 8: MIST GRAY CHENNAI HOMES COMPLETED */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 ACROSS CHENNAI
               </p>
@@ -426,7 +434,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12" data-reveal-group>
               {CHENNAI_BENCHMARKS.map((project) => {
                 const isHot = Boolean(project.hot);
                 return (
@@ -491,7 +499,7 @@ export default function App() {
         {/* BAND 9: DARK VERIFIED GOOGLE REVIEWS (FIRST CARD SOLID PINK) */}
         <section id="reviews" className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 4.9 ★ ON GOOGLE · 71 VERIFIED REVIEWS
               </p>
@@ -506,7 +514,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12" data-reveal-group>
               {TESTIMONIALS.map((t) => {
                 const isHot = Boolean(t.hot);
                 return (
@@ -570,7 +578,7 @@ export default function App() {
         {/* BAND 10: WHITE FREE CONSULTATION & DIRECT CONTACT CARD */}
         <section id="enquire" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 GET STARTED WITH ZERO PRESSURE
               </p>
@@ -585,7 +593,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-price mt-12">
+            <div className="grid-price mt-12" data-reveal-group>
               {/* Left: Hairline What's Included Table */}
               <div className="rounded-[18px] border border-[#E6E6E6] bg-white p-[28px] max-[680px]:p-[20px]">
                 <p className="mb-4 text-[11px] font-bold tracking-[0.18em] text-[#D4104C] uppercase">
@@ -694,7 +702,7 @@ export default function App() {
         {/* BAND 11: MIST GRAY 3 SIMPLE PROMISES (NARROW 900PX) */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-narrow">
-            <div className="text-center">
+            <div className="text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 OUR SIMPLE PROMISE
               </p>
@@ -709,7 +717,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="mt-12 rounded-[16px] border border-[#E6E6E6] bg-white p-[32px] max-[680px]:p-[22px]">
+            <div className="mt-12 rounded-[16px] border border-[#E6E6E6] bg-white p-[32px] max-[680px]:p-[22px]" data-reveal>
               <div className="grid-3">
                 <div className="border-r border-[#E6E6E6] pr-4 max-[1000px]:border-r-0 max-[1000px]:border-b max-[1000px]:pr-0 max-[1000px]:pb-5">
                   <p className="text-[11px] font-bold tracking-[0.16em] text-[#666666] uppercase">
@@ -757,7 +765,7 @@ export default function App() {
         {/* BAND 12: WHITE FAQ ACCORDION (NATIVE <details>, NARROW 900PX) */}
         <section id="faq" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-narrow">
-            <div className="text-center">
+            <div className="text-center" data-reveal>
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 COMMON QUESTIONS
               </p>
@@ -768,7 +776,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="mt-12 divide-y divide-[#E6E6E6] border-y border-[#E6E6E6]">
+            <div className="mt-12 divide-y divide-[#E6E6E6] border-y border-[#E6E6E6]" data-reveal>
               {FAQS.map((faq, idx) => (
                 <details key={faq.question} className="faq-item group" open={idx === 0}>
                   <summary className="flex items-center justify-between gap-4 py-[22px] text-[17px] leading-[1.45] font-semibold text-[#0A0A0A]">
@@ -791,7 +799,7 @@ export default function App() {
 
         {/* BAND 13: DARK FINAL CTA (120PX PADDING, NARROW 900PX, .XL HEADLINE) */}
         <section className="band-final w-full bg-[#0A0A0A] text-white">
-          <div className="container-narrow text-center">
+          <div className="container-narrow text-center" data-reveal>
             <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
               CALL, WHATSAPP OR VISIT US IN KUNDRATHUR
             </p>

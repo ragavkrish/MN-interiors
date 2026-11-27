@@ -15,6 +15,11 @@
   --graphite: #666666;
   --muted: #999999;
   --live: #2FD47A;
+
+  /* Motion tokens — use these for every animation on the site */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
@@ -163,16 +168,25 @@
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 150ms ease,
+    transform 160ms var(--ease-out);
 }
 
 .btn-pink:hover {
   background-color: var(--pink-hover);
-  transform: translateY(-1px);
 }
 
-.btn-pink:active {
-  transform: translateY(0);
+/* Lift only for real mouse hover — avoids sticky hover on phones */
+@media (hover: hover) and (pointer: fine) {
+  .btn-pink:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.btn-pink:active,
+.btn-ghost:active {
+  transform: scale(0.97);
 }
 
 .btn-ghost {
@@ -189,7 +203,9 @@
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 150ms ease,
+    transform 160ms var(--ease-out);
 }
 
 .btn-ghost:hover {
@@ -392,5 +408,58 @@
   .stats-cell:nth-child(1),
   .stats-cell:nth-child(2) {
     border-bottom: 1px solid var(--line);
+  }
+}
+
+/* ---------- Scroll entrances (see src/lib/useScrollReveal.ts) ---------- */
+.reveal-ready [data-reveal],
+.reveal-ready [data-reveal-group] > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 400ms var(--ease-out),
+    transform 400ms var(--ease-out);
+}
+
+.reveal-ready [data-reveal].is-revealed,
+.reveal-ready [data-reveal-group].is-revealed > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger: 50ms per item, capped so a group never takes longer than ~300ms */
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(2) { transition-delay: 50ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(3) { transition-delay: 100ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(4) { transition-delay: 150ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(5) { transition-delay: 200ms; }
+.reveal-ready [data-reveal-group].is-revealed > :nth-child(n + 6) { transition-delay: 250ms; }
+
+/* ---------- Count-up suffix ("+", "★") settles in after the number lands ---------- */
+.count-final-suffix {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 250ms var(--ease-out),
+    transform 250ms var(--ease-out);
+}
+
+.count-final-suffix.is-landed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion: keep gentle fades, drop the movement */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal],
+  .reveal-ready [data-reveal-group] > *,
+  .count-final-suffix {
+    transform: none;
+    transition: opacity 300ms ease;
+  }
+
+  .btn-pink:active,
+  .btn-ghost:active {
+    transform: none;
   }
 }

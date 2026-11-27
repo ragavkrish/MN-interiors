@@ -10,6 +10,7 @@ import {
   WhatsappLogo,
   X,
 } from '@phosphor-icons/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   CONTACT_INFO,
   SHOWCASE_CATEGORIES,
@@ -26,6 +27,10 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
   const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>('All Work');
   const [lightboxId, setLightboxId] = useState<string | null>(null);
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
+  const reduceMotion = useReducedMotion();
+  // Motion tokens from index.css
+  const easeOut = [0.23, 1, 0.32, 1] as const;
+  const easeDrawer = [0.32, 0.72, 0, 1] as const;
 
   const visibleItems =
     activeCategory === 'All Work'
@@ -155,7 +160,7 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
     <section id="our-work" className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
       <div className="container-main">
         {/* Centered Intro */}
-        <div className="mx-auto max-w-[740px] text-center">
+        <div className="mx-auto max-w-[740px] text-center" data-reveal>
           <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
             OUR RECENT WORK
           </p>
@@ -207,46 +212,54 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
           })}
         </div>
 
-        {/* Asymmetric Bento Grid (All Work) vs Balanced Filtered Grid */}
-        {activeCategory === 'All Work' ? (
-          <div className="mt-9 space-y-5">
-            {/* Top Bento Row: 2-col wide featured kitchen + 2 stacked right tiles */}
-            <div className="grid grid-cols-3 gap-5 max-[1000px]:grid-cols-2 max-[680px]:grid-cols-1">
-              {/* Lead Showcase Tile (2 cols x 2 rows on desktop) */}
-              {renderTile(
-                visibleItems[0],
-                'col-span-2 row-span-2 min-h-[470px] max-[1000px]:col-span-2 max-[1000px]:row-span-1 max-[1000px]:aspect-[16/10] max-[1000px]:min-h-0 max-[680px]:col-span-1 max-[680px]:aspect-[4/3]',
-                true,
-              )}
+        {/* Asymmetric Bento Grid (All Work) vs Balanced Filtered Grid.
+            Keyed on the filter so a new selection settles in instead of snapping. */}
+        <motion.div
+          key={activeCategory}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: easeOut }}
+        >
+          {activeCategory === 'All Work' ? (
+            <div className="mt-9 space-y-5">
+              {/* Top Bento Row: 2-col wide featured kitchen + 2 stacked right tiles */}
+              <div className="grid grid-cols-3 gap-5 max-[1000px]:grid-cols-2 max-[680px]:grid-cols-1">
+                {/* Lead Showcase Tile (2 cols x 2 rows on desktop) */}
+                {renderTile(
+                  visibleItems[0],
+                  'col-span-2 row-span-2 min-h-[470px] max-[1000px]:col-span-2 max-[1000px]:row-span-1 max-[1000px]:aspect-[16/10] max-[1000px]:min-h-0 max-[680px]:col-span-1 max-[680px]:aspect-[4/3]',
+                  true,
+                )}
 
-              {/* Right Column Stacked Tiles */}
-              {renderTile(
-                visibleItems[1],
-                'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
-              )}
-              {renderTile(
-                visibleItems[2],
-                'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
+                {/* Right Column Stacked Tiles */}
+                {renderTile(
+                  visibleItems[1],
+                  'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
+                )}
+                {renderTile(
+                  visibleItems[2],
+                  'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
+                )}
+              </div>
+
+              {/* Bottom Balanced 2-Up Bento Row */}
+              <div className="grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
+                {renderTile(visibleItems[3], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
+                {renderTile(visibleItems[4], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
+              </div>
+            </div>
+          ) : visibleItems.length === 1 ? (
+            <div className="mx-auto mt-9 max-w-[820px]">
+              {renderTile(visibleItems[0], 'aspect-[16/10] max-[680px]:aspect-[4/3]', true)}
+            </div>
+          ) : (
+            <div className="mt-9 grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
+              {visibleItems.map((item) =>
+                renderTile(item, 'aspect-[4/3]'),
               )}
             </div>
-
-            {/* Bottom Balanced 2-Up Bento Row */}
-            <div className="grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
-              {renderTile(visibleItems[3], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
-              {renderTile(visibleItems[4], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
-            </div>
-          </div>
-        ) : visibleItems.length === 1 ? (
-          <div className="mx-auto mt-9 max-w-[820px]">
-            {renderTile(visibleItems[0], 'aspect-[16/10] max-[680px]:aspect-[4/3]', true)}
-          </div>
-        ) : (
-          <div className="mt-9 grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
-            {visibleItems.map((item) =>
-              renderTile(item, 'aspect-[4/3]'),
-            )}
-          </div>
-        )}
+          )}
+        </motion.div>
 
         {/* Bottom strip below gallery */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[14px] border border-[#E6E6E6] bg-white px-6 py-4 max-[680px]:flex-col max-[680px]:items-start">
@@ -268,151 +281,168 @@ export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
       </div>
 
       {/* Fullscreen Lightbox Viewer */}
-      {activeItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-xs max-[680px]:p-3"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="lightbox-title"
-          onClick={() => setLightboxId(null)}
-        >
-          <div
-            className="relative max-h-[94vh] w-full max-w-[1120px] overflow-y-auto rounded-[20px] border border-white/15 bg-[#0A0A0A] text-white"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {activeItem && (
+          <motion.div
+            key="lightbox-overlay"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-xs max-[680px]:p-3"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lightbox-title"
+            onClick={() => setLightboxId(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.2, ease: easeOut } }}
+            exit={{ opacity: 0, transition: { duration: 0.15, ease: easeOut } }}
           >
-            {/* Top Bar inside Lightbox */}
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-4 max-[680px]:px-4">
-              <div className="flex items-center gap-3">
-                <span className="rounded-[6px] bg-[#F31C60] px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-white uppercase">
-                  {activeItem.category}
-                </span>
-                <span className="font-display text-[13px] font-bold text-white/60 tabular-nums">
-                  {String(lightboxIndex + 1).padStart(2, '0')} /{' '}
-                  {String(visibleItems.length).padStart(2, '0')}
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setLightboxId(null)}
-                aria-label="Close fullscreen preview"
-                className="flex h-[40px] w-[40px] shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-[#141414] text-white transition-colors hover:bg-[#F31C60]"
-              >
-                <X size={18} weight="bold" aria-hidden="true" />
-              </button>
-            </div>
-
-            {/* Split Media + Details Body */}
-            <div className="grid grid-cols-[1.35fr_0.65fr] max-[920px]:grid-cols-1">
-              {/* High-Res Photo Stage */}
-              <div className="relative flex min-h-[340px] items-center justify-center bg-black p-4 max-[680px]:min-h-[240px] max-[680px]:p-2">
-                {brokenImages[activeItem.id] ? (
-                  <div className="flex h-[360px] w-full flex-col items-center justify-center rounded-[12px] bg-[#141414] p-8 text-center">
-                    <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[14px] bg-[#F31C60] text-white">
-                      <ImageIcon size={28} weight="fill" aria-hidden="true" />
-                    </div>
-                    <p className="font-display mt-4 text-[20px] font-extrabold text-white">
-                      {activeItem.title}
-                    </p>
-                  </div>
-                ) : (
-                  <img
-                    src={activeItem.imageSrc}
-                    alt={activeItem.imageAlt}
-                    referrerPolicy="no-referrer"
-                    onError={() => markImageBroken(activeItem.id)}
-                    className="max-h-[68vh] w-full rounded-[12px] object-contain"
-                  />
-                )}
-              </div>
-
-              {/* Project Details & Direct Style Enquiry Panel */}
-              <div className="flex flex-col justify-between border-l border-white/10 bg-[#141414] p-6 max-[920px]:border-t max-[920px]:border-l-0 max-[680px]:p-5">
-                <div>
-                  <div className="flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.14em] text-[#F31C60] uppercase">
-                    <MapPin size={14} weight="fill" aria-hidden="true" />
-                    <span>{activeItem.area}</span>
-                  </div>
-
-                  <h3
-                    id="lightbox-title"
-                    className="font-display mt-2 text-[24px] leading-[1.15] font-black tracking-[-0.4px] text-white"
-                  >
-                    {activeItem.title}
-                  </h3>
-
-                  <p className="mt-3 text-[14.5px] leading-[1.65] text-white/75">
-                    {activeItem.summary}
-                  </p>
-
-                  <ul className="mt-5 space-y-2.5 border-t border-white/10 pt-5">
-                    {activeItem.highlights.map((hl) => (
-                      <li key={hl} className="flex items-start gap-2.5 text-[13.5px] text-white/85">
-                        <span className="mt-0.5 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-[6px] bg-[#F31C60] text-white">
-                          <Check size={11} weight="bold" aria-hidden="true" />
-                        </span>
-                        <span>{hl}</span>
-                      </li>
-                    ))}
-                  </ul>
+            <motion.div
+              className="relative max-h-[94vh] w-full max-w-[1120px] overflow-y-auto rounded-[20px] border border-white/15 bg-[#0A0A0A] text-white"
+              onClick={(e) => e.stopPropagation()}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1, transition: { duration: 0.3, ease: easeDrawer } }}
+              exit={
+                reduceMotion
+                  ? { opacity: 0, transition: { duration: 0.15 } }
+                  : { opacity: 0, scale: 0.97, transition: { duration: 0.15, ease: easeOut } }
+              }
+            >
+              {/* Top Bar inside Lightbox */}
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-4 max-[680px]:px-4">
+                <div className="flex items-center gap-3">
+                  <span className="rounded-[6px] bg-[#F31C60] px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-white uppercase">
+                    {activeItem.category}
+                  </span>
+                  <span className="font-display text-[13px] font-bold text-white/60 tabular-nums">
+                    {String(lightboxIndex + 1).padStart(2, '0')} /{' '}
+                    {String(visibleItems.length).padStart(2, '0')}
+                  </span>
                 </div>
 
-                <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const scope = activeItem.enquiryScope;
-                      const title = activeItem.title;
-                      setLightboxId(null);
-                      onEnquireStyle(scope, title);
-                    }}
-                    className="btn-pink btn-md w-full"
-                  >
-                    <ChatCircleText size={17} weight="fill" aria-hidden="true" />
-                    <span>Enquire About This Style</span>
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => setLightboxId(null)}
+                  aria-label="Close fullscreen preview"
+                  className="flex h-[40px] w-[40px] shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-[#141414] text-white transition-colors hover:bg-[#F31C60]"
+                >
+                  <X size={18} weight="bold" aria-hidden="true" />
+                </button>
+              </div>
 
-                  <a
-                    href={buildStyleWhatsappHref(activeItem)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-ghost btn-sm w-full"
-                  >
-                    <WhatsappLogo
-                      size={17}
-                      weight="fill"
-                      className="text-[#2FD47A]"
-                      aria-hidden="true"
-                    />
-                    <span>WhatsApp About This Style</span>
-                  </a>
-
-                  {visibleItems.length > 1 && (
-                    <div className="grid grid-cols-2 gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={handlePrevLightbox}
-                        className="btn-ghost btn-sm w-full"
-                      >
-                        <ArrowLeft size={15} weight="fill" aria-hidden="true" />
-                        <span>Previous</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNextLightbox}
-                        className="btn-ghost btn-sm w-full"
-                      >
-                        <span>Next</span>
-                        <ArrowRight size={15} weight="fill" aria-hidden="true" />
-                      </button>
+              {/* Split Media + Details Body */}
+              <div className="grid grid-cols-[1.35fr_0.65fr] max-[920px]:grid-cols-1">
+                {/* High-Res Photo Stage */}
+                <div className="relative flex min-h-[340px] items-center justify-center bg-black p-4 max-[680px]:min-h-[240px] max-[680px]:p-2">
+                  {brokenImages[activeItem.id] ? (
+                    <div className="flex h-[360px] w-full flex-col items-center justify-center rounded-[12px] bg-[#141414] p-8 text-center">
+                      <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[14px] bg-[#F31C60] text-white">
+                        <ImageIcon size={28} weight="fill" aria-hidden="true" />
+                      </div>
+                      <p className="font-display mt-4 text-[20px] font-extrabold text-white">
+                        {activeItem.title}
+                      </p>
                     </div>
+                  ) : (
+                    <motion.img
+                      key={activeItem.id}
+                      src={activeItem.imageSrc}
+                      alt={activeItem.imageAlt}
+                      referrerPolicy="no-referrer"
+                      onError={() => markImageBroken(activeItem.id)}
+                      className="max-h-[68vh] w-full rounded-[12px] object-contain"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2, ease: easeOut }}
+                    />
                   )}
                 </div>
+
+                {/* Project Details & Direct Style Enquiry Panel */}
+                <div className="flex flex-col justify-between border-l border-white/10 bg-[#141414] p-6 max-[920px]:border-t max-[920px]:border-l-0 max-[680px]:p-5">
+                  <div>
+                    <div className="flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.14em] text-[#F31C60] uppercase">
+                      <MapPin size={14} weight="fill" aria-hidden="true" />
+                      <span>{activeItem.area}</span>
+                    </div>
+
+                    <h3
+                      id="lightbox-title"
+                      className="font-display mt-2 text-[24px] leading-[1.15] font-black tracking-[-0.4px] text-white"
+                    >
+                      {activeItem.title}
+                    </h3>
+
+                    <p className="mt-3 text-[14.5px] leading-[1.65] text-white/75">
+                      {activeItem.summary}
+                    </p>
+
+                    <ul className="mt-5 space-y-2.5 border-t border-white/10 pt-5">
+                      {activeItem.highlights.map((hl) => (
+                        <li key={hl} className="flex items-start gap-2.5 text-[13.5px] text-white/85">
+                          <span className="mt-0.5 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-[6px] bg-[#F31C60] text-white">
+                            <Check size={11} weight="bold" aria-hidden="true" />
+                          </span>
+                          <span>{hl}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const scope = activeItem.enquiryScope;
+                        const title = activeItem.title;
+                        setLightboxId(null);
+                        onEnquireStyle(scope, title);
+                      }}
+                      className="btn-pink btn-md w-full"
+                    >
+                      <ChatCircleText size={17} weight="fill" aria-hidden="true" />
+                      <span>Enquire About This Style</span>
+                    </button>
+
+                    <a
+                      href={buildStyleWhatsappHref(activeItem)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-ghost btn-sm w-full"
+                    >
+                      <WhatsappLogo
+                        size={17}
+                        weight="fill"
+                        className="text-[#2FD47A]"
+                        aria-hidden="true"
+                      />
+                      <span>WhatsApp About This Style</span>
+                    </a>
+
+                    {visibleItems.length > 1 && (
+                      <div className="grid grid-cols-2 gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={handlePrevLightbox}
+                          className="btn-ghost btn-sm w-full"
+                        >
+                          <ArrowLeft size={15} weight="fill" aria-hidden="true" />
+                          <span>Previous</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleNextLightbox}
+                          className="btn-ghost btn-sm w-full"
+                        >
+                          <span>Next</span>
+                          <ArrowRight size={15} weight="fill" aria-hidden="true" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

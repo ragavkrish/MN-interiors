@@ -9,6 +9,8 @@ export interface StatItem {
   value: string;
   caption: string;
   accent: boolean;
+  /** When set, the number counts up on scroll instead of showing `value` statically */
+  count?: { to: number; decimals?: number; suffix?: string; finalSuffix?: string };
 }
 
 export interface CraftPillar {
@@ -225,9 +227,24 @@ export const HERO_SUMMARY_ROWS: HeroStackRow[] = [
 ];
 
 export const STATS_BAND: StatItem[] = [
-  { value: '20+', caption: 'Years of Interior Craftsmanship in Chennai', accent: false },
-  { value: '4.9 ★', caption: 'Google Rating Across 71 Verified Reviews', accent: true },
-  { value: '10 YR', caption: 'Warranty on Our Workmanship & Woodwork', accent: false },
+  {
+    value: '20+',
+    caption: 'Years of Interior Craftsmanship in Chennai',
+    accent: false,
+    count: { to: 20, finalSuffix: '+' },
+  },
+  {
+    value: '4.9 ★',
+    caption: 'Google Rating Across 71 Verified Reviews',
+    accent: true,
+    count: { to: 4.9, decimals: 1, finalSuffix: ' ★' },
+  },
+  {
+    value: '10 YR',
+    caption: 'Warranty on Our Workmanship & Woodwork',
+    accent: false,
+    count: { to: 10, suffix: ' YR' },
+  },
   { value: 'FREE', caption: 'Home Visit & Clear Written Estimate', accent: true },
 ];
 
