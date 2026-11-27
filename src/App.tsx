@@ -18,6 +18,8 @@ import {
   X,
 } from '@phosphor-icons/react';
 import { BookingModal, type BookingMode } from './components/BookingModal';
+import { CountUp } from './components/CountUp';
+import { useScrollReveal } from './hooks/useScrollReveal';
 import { Hero } from './components/Hero';
 import { Navbar } from './components/Navbar';
 import { ProcessStepper } from './components/ProcessStepper';
@@ -72,6 +74,7 @@ function RoomIcon({ icon }: { icon: RoomScope['icon'] }) {
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<BookingMode>('audit');
+  useScrollReveal();
 
   const openBooking = (mode: BookingMode = 'audit') => {
     setModalMode(mode);
@@ -89,19 +92,18 @@ export default function App() {
         {/* BAND 2: WHITE 4-UP STATS STRIP */}
         <section className="w-full border-b border-[#E6E6E6] bg-white">
           <div className="container-main">
-            <div className="stats-grid">
+            <div className="stats-grid reveal-grid">
               {STATS_BAND.map((stat) => (
                 <div
                   key={stat.caption}
                   className="stats-cell px-6 py-10 text-center max-[680px]:px-4 max-[680px]:py-7"
                 >
-                  <p
+                  <CountUp
+                    value={stat.value}
                     className={`font-display text-[44px] leading-[1.15] font-black tracking-[-1px] tabular-nums max-[680px]:text-[34px] ${
                       stat.accent ? 'text-[#F31C60]' : 'text-[#0A0A0A]'
                     }`}
-                  >
-                    {stat.value}
-                  </p>
+                  />
                   <p className="mx-auto mt-2 max-w-[210px] text-[13.5px] leading-[1.45] text-[#666666]">
                     {stat.caption}
                   </p>
@@ -114,7 +116,7 @@ export default function App() {
         {/* BAND 3: DARK PROBLEM VS SOLUTION + PULL-QUOTE */}
         <section className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[760px] text-center">
+            <div className="mx-auto max-w-[760px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 THE CHENNAI REALITY CHECK
               </p>
@@ -130,7 +132,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-split mt-12">
+            <div className="grid-split mt-12 reveal-grid">
               {/* Left: Problem List with Cross Badges */}
               <div className="space-y-3">
                 <p className="mb-4 text-[11px] font-semibold tracking-[0.18em] text-white/50 uppercase">
@@ -187,7 +189,7 @@ export default function App() {
         {/* BAND 4: WHITE CRAFTSMANSHIP PILLARS (3-UP GRID, ONE HOT CARD PER GROUP OF 3) */}
         <section id="craftsmanship" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 THE CRAFTSMANSHIP DIFFERENCE
               </p>
@@ -202,7 +204,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12 reveal-grid">
               {CRAFT_PILLARS.map((pillar) => {
                 const isHot = Boolean(pillar.hot);
                 return (
@@ -242,9 +244,7 @@ export default function App() {
 
                     <p
                       className={`mt-6 border-t pt-4 text-[12.5px] font-bold tracking-[0.06em] uppercase ${
-                        isHot
-                          ? 'border-white/25 text-white'
-                          : 'border-[#E6E6E6] text-[#D4104C]'
+                        isHot ? 'border-white/25 text-white' : 'border-[#E6E6E6] text-[#D4104C]'
                       }`}
                     >
                       {pillar.footnote}
@@ -262,7 +262,7 @@ export default function App() {
         {/* BAND 6: DARK COMPARISON PAIR (WHITE BEFORE VS INK 2 2PX PINK WINNER) */}
         <section className="band-section w-full border-t border-white/10 bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 WHICH ONE ARE YOU HIRING?
               </p>
@@ -277,7 +277,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-2 mt-12">
+            <div className="grid-2 mt-12 reveal-grid">
               {/* Left: Before Card (White with Mist Gray Tag) */}
               <div className="rounded-[16px] border border-[#E6E6E6] bg-white p-[34px] text-[#0A0A0A] max-[680px]:p-[24px]">
                 <span className="inline-block rounded-[6px] bg-[#F4F4F4] px-[10px] py-[6px] text-[11px] font-bold tracking-[0.16em] text-[#666666] uppercase">
@@ -324,7 +324,7 @@ export default function App() {
         {/* BAND 7: WHITE SIGNATURE ROOMS 4-UP GRID */}
         <section className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 WHAT WE CRAFT IN-HOUSE
               </p>
@@ -339,7 +339,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-4 mt-12">
+            <div className="grid-4 mt-12 reveal-grid">
               {SIGNATURE_ROOMS.map((room) => {
                 const isHot = Boolean(room.hot);
                 return (
@@ -365,9 +365,7 @@ export default function App() {
                         </div>
                         <span
                           className={`rounded-[6px] px-2.5 py-1 text-[10.5px] font-bold tracking-[0.14em] uppercase ${
-                            isHot
-                              ? 'bg-black/20 text-white'
-                              : 'bg-[#F4F4F4] text-[#666666]'
+                            isHot ? 'bg-black/20 text-white' : 'bg-[#F4F4F4] text-[#666666]'
                           }`}
                         >
                           {room.tag}
@@ -394,7 +392,7 @@ export default function App() {
         {/* BAND 8: MIST GRAY CHENNAI NEIGHBOURHOOD PROOF BENCHMARKS */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 BUILT ACROSS CHENNAI
               </p>
@@ -409,7 +407,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12 reveal-grid">
               {CHENNAI_BENCHMARKS.map((project) => {
                 const isHot = Boolean(project.hot);
                 return (
@@ -474,7 +472,7 @@ export default function App() {
         {/* BAND 9: DARK FIVE-STAR TESTIMONIALS (FIRST CARD SOLID PINK) */}
         <section className="band-section w-full bg-[#0A0A0A] text-white">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
                 WORD OF MOUTH FOR 22 YEARS
               </p>
@@ -489,7 +487,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid-3 mt-12">
+            <div className="grid-3 mt-12 reveal-grid">
               {TESTIMONIALS.map((t) => {
                 const isHot = Boolean(t.hot);
                 return (
@@ -553,7 +551,7 @@ export default function App() {
         {/* BAND 10: WHITE VALUE-STACK TABLE + DARK PRICE CARD */}
         <section id="pricing" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-main">
-            <div className="mx-auto max-w-[740px] text-center">
+            <div className="mx-auto max-w-[740px] text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 START WITH TOTAL CLARITY
               </p>
@@ -671,7 +669,7 @@ export default function App() {
         {/* BAND 11: MIST GRAY 20-YEAR OWNERSHIP MATH & GUARANTEE (NARROW 900PX) */}
         <section className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
           <div className="container-narrow">
-            <div className="text-center">
+            <div className="text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 THE 20-YEAR OWNERSHIP MATH
               </p>
@@ -734,7 +732,7 @@ export default function App() {
         {/* BAND 12: WHITE FAQ ACCORDION (NATIVE <details>, NARROW 900PX) */}
         <section id="faq" className="band-section w-full bg-white text-[#0A0A0A]">
           <div className="container-narrow">
-            <div className="text-center">
+            <div className="text-center reveal-stack">
               <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
                 STRAIGHT ANSWERS
               </p>
@@ -768,7 +766,7 @@ export default function App() {
 
         {/* BAND 13: DARK FINAL CTA (120PX PADDING, NARROW 900PX, .XL HEADLINE) */}
         <section className="band-final w-full bg-[#0A0A0A] text-white">
-          <div className="container-narrow text-center">
+          <div className="container-narrow text-center reveal-stack">
             <p className="text-[12px] font-semibold tracking-[0.22em] text-[#F31C60] uppercase">
               LIMITED TO 4 CHENNAI HOMES PER MONTH
             </p>

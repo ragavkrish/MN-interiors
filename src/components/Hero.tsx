@@ -13,22 +13,30 @@ export function Hero({ onOpenBooking }: HeroProps) {
           {/* Left Column */}
           <div>
             {/* Outlined live status pill */}
-            <div className="mb-6 inline-flex items-center gap-2.5 rounded-[99px] border border-white/18 px-4 py-2 text-[13px] font-medium text-white/85">
+            <div className="hero-in mb-6 inline-flex items-center gap-2.5 rounded-[99px] border border-white/18 px-4 py-2 text-[13px] font-medium text-white/85">
               <span className="live-dot" aria-hidden="true" />
               <span>CHENNAI&apos;S MASTER JOINERY STUDIO · EST. 2004</span>
             </div>
 
             <h1 className="hero-h1 text-white">
-              22 YEARS OF
-              <br />
-              CHENNAI INTERIORS.
-              <br />
-              <em>BUILT BY MASTER</em>
-              <br />
-              <em>CRAFTSMEN.</em>
+              <span className="hero-line hero-in" style={{ animationDelay: '70ms' }}>
+                22 YEARS OF
+              </span>
+              <span className="hero-line hero-in" style={{ animationDelay: '140ms' }}>
+                CHENNAI INTERIORS.
+              </span>
+              <em className="hero-line hero-in" style={{ animationDelay: '210ms' }}>
+                BUILT BY MASTER
+              </em>
+              <em className="hero-line hero-in" style={{ animationDelay: '280ms' }}>
+                CRAFTSMEN.
+              </em>
             </h1>
 
-            <p className="mt-6 max-w-[560px] text-[18px] leading-[1.65] font-normal text-white/65 max-[680px]:text-[16px]">
+            <p
+              className="hero-in mt-6 max-w-[560px] text-[18px] leading-[1.65] font-normal text-white/65 max-[680px]:text-[16px]"
+              style={{ animationDelay: '350ms' }}
+            >
               For over two decades across Boat Club, Adyar, Anna Nagar, and ECR, Kalaigar has
               crafted residential interiors inside our own 18,000 sq.ft. Ambattur workshop—zero
               sub-contracting, zero particle board, engineered to outlast Chennai&apos;s coastal
@@ -36,7 +44,10 @@ export function Hero({ onOpenBooking }: HeroProps) {
             </p>
 
             {/* Primary & Ghost CTA buttons */}
-            <div className="mt-8 flex flex-wrap items-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch">
+            <div
+              className="hero-in mt-8 flex flex-wrap items-center gap-3.5 max-[680px]:flex-col max-[680px]:items-stretch"
+              style={{ animationDelay: '420ms' }}
+            >
               <button
                 type="button"
                 onClick={() => onOpenBooking('audit')}
@@ -52,14 +63,17 @@ export function Hero({ onOpenBooking }: HeroProps) {
               </a>
             </div>
 
-            <p className="mt-4 text-[13px] leading-[1.5] text-white/50">
+            <p
+              className="hero-in mt-4 text-[13px] leading-[1.5] text-white/50"
+              style={{ animationDelay: '490ms' }}
+            >
               ₹4,999 is 100% credited toward your turnkey build · 15-Year Written Structural
               Warranty · Alwarpet Studio &amp; Ambattur Factory
             </p>
           </div>
 
           {/* Right Column: Ink 2 Value-Stack Card */}
-          <div className="rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]">
+          <div className="hero-card-in rounded-[18px] border border-white/10 bg-[#141414] p-[28px] max-[680px]:p-[22px]">
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.18em] text-[#F31C60] uppercase">
