@@ -1,0 +1,85 @@
+{
+ "summary": {
+  "health_score": 40,
+  "business_type": "Local service (hybrid: workshop + service area) \u2014 interior design & joinery, Kundrathur, Chennai",
+  "top_findings": [
+   "Site not deployed; domain has no indexed pages",
+   "HTML body empty until JavaScript runs (client-side rendering only)",
+   "Only one URL \u2014 no service, project or area pages to rank",
+   "No structured data; brand name collides with other 'MN Interiors' businesses",
+   "Possible wrong PIN code (600089 vs Kundrathur 600069) \u2014 verify"
+  ],
+  "quick_wins": [
+   "robots.txt, sitemap.xml, canonical, favicon, og:image",
+   "LocalBusiness JSON-LD from CONTACT_INFO",
+   "Delete public/assets/aistudio before launch",
+   "Compress showcase photos to AVIF/WebP with srcset",
+   "Claim/verify Google Business Profile with matching NAP"
+  ]
+ },
+ "categories": [
+  {
+   "name": "Technical SEO",
+   "score": 35
+  },
+  {
+   "name": "Content Quality",
+   "score": 50
+  },
+  {
+   "name": "On-Page SEO",
+   "score": 45
+  },
+  {
+   "name": "Schema / Structured Data",
+   "score": 0
+  },
+  {
+   "name": "Performance (CWV)",
+   "score": 70,
+   "what_works": [
+    "LCP 2.14s and CLS 0 on throttled mobile (lab)"
+   ]
+  },
+  {
+   "name": "AI Search Readiness",
+   "score": 25
+  },
+  {
+   "name": "Images",
+   "score": 40,
+   "what_works": [
+    "Descriptive alt text on all images"
+   ]
+  }
+ ],
+ "action_plan": {
+  "phases": [
+   {
+    "name": "Phase 1: Foundation",
+    "timeframe": "Week 1"
+   },
+   {
+    "name": "Phase 2: Structure & pages",
+    "timeframe": "Weeks 2-3"
+   },
+   {
+    "name": "Phase 3: Local authority",
+    "timeframe": "Month 2"
+   },
+   {
+    "name": "Phase 4: Content & monitoring",
+    "timeframe": "Ongoing"
+   }
+  ]
+ },
+ "artifacts": {
+  "report": "FULL-AUDIT-REPORT.md",
+  "plan": "ACTION-PLAN.md"
+ },
+ "limitations": [
+  "Site not live: no rankings, GSC, CrUX or backlink data",
+  "No DataForSEO/Moz/Google credentials configured",
+  "Outbound network restricted; web search used for SERP/brand checks"
+ ]
+}
