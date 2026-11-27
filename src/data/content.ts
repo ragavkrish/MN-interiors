@@ -243,7 +243,12 @@ export const STATS_BAND: StatItem[] = [
     accent: false,
     count: { to: 10, suffix: ' YR' },
   },
-  { value: 'FREE', caption: 'Home Visit & Clear Written Estimate', accent: true },
+  {
+    value: '556+',
+    caption: 'Homes Completed Across Chennai',
+    accent: true,
+    count: { to: 556, finalSuffix: '+' },
+  },
 ];
 
 export const PROBLEM_POINTS: string[] = [
