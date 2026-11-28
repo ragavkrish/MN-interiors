@@ -83,7 +83,7 @@ export default function CountUp({
       <span className="sr-only">{finalText}</span>
       <span aria-hidden="true">
         {value.toFixed(decimals)}
-        {suffix}
+        {suffix && <span className="text-[var(--pink-aa)]">{suffix}</span>}
         {finalSuffix && (
           <span className={`count-final-suffix ${landed ? 'is-landed' : ''}`}>{finalSuffix}</span>
         )}

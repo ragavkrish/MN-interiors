@@ -8,11 +8,10 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
-  { label: 'Our Work', href: '#our-work' },
-  { label: 'Why Us', href: '#craftsmanship' },
-  { label: 'How We Work', href: '#how-we-work' },
+  { label: 'Our work', href: '#our-work' },
   { label: 'Services', href: '#services' },
   { label: 'Reviews', href: '#reviews' },
+  { label: 'FAQ', href: '#faq' },
 ];
 
 export function Navbar({ onOpenEnquiry }: NavbarProps) {
@@ -31,30 +30,30 @@ export function Navbar({ onOpenEnquiry }: NavbarProps) {
 
   return (
     <>
-      {/* One-line dark announcement topbar with real rating & clickable phone */}
-      <div className="w-full bg-[#0A0A0A] px-4 py-[9px] text-center text-[13px] leading-[1.45] text-white/80">
+      {/* One-line warm ink announcement bar with real rating and clickable phone */}
+      <div className="w-full bg-[var(--ink)] px-4 py-[10px] text-center text-[13.5px] leading-[1.45] text-[var(--white)]/85">
         <span>
-          20+ YEARS IN CHENNAI · 4.9 ★ GOOGLE RATED (71 REVIEWS) · KUNDRATHUR —{' '}
+          20+ years in Chennai · 4.9 ★ Google rated (71 reviews) · Kundrathur —{' '}
         </span>
         <a
           href={CONTACT_INFO.phoneHref}
-          className="font-bold text-[#F31C60] tabular-nums hover:underline"
+          className="font-semibold text-[var(--white)] underline decoration-[var(--pink)] decoration-2 underline-offset-4 tabular-nums transition-colors hover:text-[var(--tint)]"
         >
-          CALL / WHATSAPP {CONTACT_INFO.phoneDisplay}
+          Call or WhatsApp {CONTACT_INFO.phoneDisplay}
         </a>
       </div>
 
-      {/* 68px sticky blurred white nav: 3-zone layout (wordmark | nav links | primary CTA) */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#E6E6E6] bg-white/96 backdrop-blur-[10px]">
+      {/* 68px sticky blurred warm-paper nav: 3-zone layout (wordmark | nav links | primary CTA) */}
+      <header className="sticky top-0 z-40 w-full border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]">
         <div className="container-main flex h-[68px] items-center justify-between gap-8">
-          {/* Zone 1: Brand wordmark */}
+          {/* Zone 1: Brand wordmark in Cormorant Garamond (>= 20px, weight 600) */}
           <a
             href="#top"
             onClick={() => setMobileMenuOpen(false)}
-            className="font-display shrink-0 whitespace-nowrap text-[18px] font-black tracking-[-0.3px] text-[#0A0A0A]"
+            className="font-display shrink-0 whitespace-nowrap text-[24px] leading-none font-semibold tracking-[-0.01em] text-[var(--ink)]"
             aria-label="MN Interiors Kundrathur Chennai Home"
           >
-            <span className="text-[#F31C60]">M</span>N INTERIORS
+            <span className="text-[var(--pink-aa)]">MN</span> Interiors
           </a>
 
           {/* Zone 2: Desktop navigation links */}
@@ -66,7 +65,7 @@ export function Navbar({ onOpenEnquiry }: NavbarProps) {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative shrink-0 py-1 text-[14px] font-semibold whitespace-nowrap text-[#0A0A0A]/75 transition-colors duration-150 hover:text-[#0A0A0A] after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:origin-left after:scale-x-0 after:bg-[#F31C60] after:transition-transform after:duration-200 hover:after:scale-x-100"
+                className="relative shrink-0 py-1 text-[15px] font-medium whitespace-nowrap text-[var(--graphite)] transition-colors duration-150 hover:text-[var(--ink)] after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:origin-left after:scale-x-0 after:bg-[var(--pink)] after:transition-transform after:duration-200 hover:after:scale-x-100"
               >
                 {link.label}
               </a>
@@ -84,7 +83,7 @@ export function Navbar({ onOpenEnquiry }: NavbarProps) {
               className="btn-pink btn-sm btn-nav-mobile"
             >
               <ChatCircleText size={17} weight="fill" aria-hidden="true" />
-              <span>Get a Free Quote</span>
+              <span>Get a free quote</span>
             </button>
 
             <button
@@ -93,7 +92,7 @@ export function Navbar({ onOpenEnquiry }: NavbarProps) {
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-drawer"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="inline-flex h-[40px] w-[40px] shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[#E6E6E6] bg-white text-[#0A0A0A] transition-colors hover:border-[#0A0A0A] active:scale-[0.97] motion-reduce:active:scale-100 min-[900px]:hidden"
+              className="inline-flex h-[40px] w-[40px] shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--white)] text-[var(--ink)] transition-colors hover:border-[var(--ink)] active:scale-[0.97] motion-reduce:active:scale-100 min-[900px]:hidden"
             >
               {mobileMenuOpen ? (
                 <X size={19} weight="bold" aria-hidden="true" />
@@ -113,43 +112,51 @@ export function Navbar({ onOpenEnquiry }: NavbarProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
               transition={{ duration: 0.18, ease: easeOut }}
-              className="border-t border-[#E6E6E6] bg-white min-[900px]:hidden"
+              className="border-t border-[var(--line)] bg-[var(--white)] min-[900px]:hidden"
             >
               <div className="container-main py-4">
-                <nav aria-label="Mobile navigation" className="flex flex-col divide-y divide-[#E6E6E6]">
-                  {[...NAV_LINKS, { label: 'FAQ', href: '#faq' }].map((link) => (
+                <nav
+                  aria-label="Mobile navigation"
+                  className="flex flex-col divide-y divide-[var(--line)]"
+                >
+                  {NAV_LINKS.map((link) => (
                     <a
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="py-3.5 text-[15px] font-semibold text-[#0A0A0A] transition-colors hover:text-[#D4104C]"
+                      className="py-3.5 text-[15px] font-medium text-[var(--ink)] transition-colors hover:text-[var(--pink-aa)]"
                     >
                       {link.label}
                     </a>
                   ))}
                 </nav>
 
-                <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[#E6E6E6] pt-4">
+                <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[var(--line)] pt-4">
                   <a
                     href={CONTACT_INFO.phoneHref}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-[#E6E6E6] bg-[#F4F4F4] px-3 text-[13.5px] font-bold text-[#0A0A0A] tabular-nums"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-[var(--line)] bg-[var(--mist)] px-3 text-[14px] font-semibold text-[var(--ink)] tabular-nums"
                   >
-                    <PhoneCall size={16} weight="fill" className="text-[#D4104C]" aria-hidden="true" />
-                    <span>Call Us</span>
+                    <PhoneCall
+                      size={16}
+                      weight="fill"
+                      className="text-[var(--pink-aa)]"
+                      aria-hidden="true"
+                    />
+                    <span>Call us</span>
                   </a>
                   <a
                     href={CONTACT_INFO.whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#0A0A0A] px-3 text-[13.5px] font-bold text-white"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[var(--ink)] px-3 text-[14px] font-semibold text-[var(--white)]"
                   >
                     <WhatsappLogo
                       size={17}
                       weight="fill"
-                      className="text-[#2FD47A]"
+                      className="text-[var(--live)]"
                       aria-hidden="true"
                     />
-                    <span>WhatsApp</span>
+                    <span>WhatsApp us</span>
                   </a>
                 </div>
               </div>

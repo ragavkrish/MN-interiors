@@ -1,464 +1,241 @@
-import { useEffect, useState } from 'react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowsOutSimple,
-  ChatCircleText,
-  Check,
-  Image as ImageIcon,
-  MapPin,
-  WhatsappLogo,
-  X,
-} from '@phosphor-icons/react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import {
-  CONTACT_INFO,
-  SHOWCASE_CATEGORIES,
-  WORK_SHOWCASE_ITEMS,
-  type ShowcaseCategory,
-  type ShowcaseItem,
-} from '../data/content';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { WORK_SHOWCASE_ITEMS } from '../data/content';
 
 interface WorkShowcaseProps {
   onEnquireStyle: (scope: string, projectTitle: string) => void;
 }
 
+const num = (i: number) => String(i + 1).padStart(2, '0');
+
+/**
+ * "Spotlight" recent-work section: one large photo with tappable detail dots,
+ * a popover explaining each detail, a numbered detail list, and thumbnails
+ * to switch between projects.
+ */
 export function WorkShowcase({ onEnquireStyle }: WorkShowcaseProps) {
-  const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>('All Work');
-  const [lightboxId, setLightboxId] = useState<string | null>(null);
-  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
-  const reduceMotion = useReducedMotion();
-  // Motion tokens from index.css
-  const easeOut = [0.23, 1, 0.32, 1] as const;
-  const easeDrawer = [0.32, 0.72, 0, 1] as const;
+  const items = WORK_SHOWCASE_ITEMS;
+  const frameRef = useRef<HTMLDivElement>(null);
+  const popRef = useRef<HTMLDivElement>(null);
 
-  const visibleItems =
-    activeCategory === 'All Work'
-      ? WORK_SHOWCASE_ITEMS
-      : WORK_SHOWCASE_ITEMS.filter((item) => item.category === activeCategory);
+  const [cur, setCur] = useState(0);
+  const [det, setDet] = useState(-1);
+  const [calm, setCalm] = useState(false); // stops the dot pulse once the visitor interacts
+  const [frame, setFrame] = useState({ w: 0, h: 0 });
+  const [popStyle, setPopStyle] = useState<CSSProperties>({});
+  const [popShown, setPopShown] = useState(false);
 
-  const lightboxIndex = lightboxId
-    ? visibleItems.findIndex((item) => item.id === lightboxId)
-    : -1;
-  const activeItem: ShowcaseItem | null =
-    lightboxIndex >= 0 ? visibleItems[lightboxIndex] : null;
+  const item = items[cur];
 
+  // Track the photo frame's size so dots can be placed on the cover-cropped photo.
   useEffect(() => {
-    if (!activeItem) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setLightboxId(null);
-      } else if (e.key === 'ArrowRight' && visibleItems.length > 1) {
-        const nextIndex = (lightboxIndex + 1) % visibleItems.length;
-        setLightboxId(visibleItems[nextIndex].id);
-      } else if (e.key === 'ArrowLeft' && visibleItems.length > 1) {
-        const prevIndex = (lightboxIndex - 1 + visibleItems.length) % visibleItems.length;
-        setLightboxId(visibleItems[prevIndex].id);
-      }
+    const el = frameRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setFrame({ w: el.clientWidth, h: el.clientHeight }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Map a point given in % of the original photo to pixels in the cropped frame.
+  const toFrame = (x: number, y: number) => {
+    const { w: fw, h: fh } = frame;
+    const k = Math.max(fw / item.imageWidth, fh / item.imageHeight);
+    const ox = (fw - item.imageWidth * k) / 2;
+    const oy = (fh - item.imageHeight * k) / 2;
+    return { left: ox + (x / 100) * item.imageWidth * k, top: oy + (y / 100) * item.imageHeight * k };
+  };
+
+  // Position the popover beside the active dot (or as an edge strip on phones).
+  useLayoutEffect(() => {
+    const pop = popRef.current;
+    if (det < 0 || !pop || !frame.w) {
+      setPopShown(false);
+      return;
+    }
+    const d = item.details[det];
+    const { left: x, top: y } = toFrame(d.x, d.y);
+    const fw = frame.w;
+    const fh = frame.h;
+    if (window.innerWidth < 600) {
+      // Phones: the in-frame popover is hidden (CSS) and the caption under the photo is used instead.
+      setPopStyle({});
+    } else {
+      const pw = pop.offsetWidth;
+      const ph = pop.offsetHeight;
+      const right = x + 26 + pw < fw;
+      const left = Math.min(Math.max(right ? x + 26 : x - 26 - pw, 12), fw - pw - 12);
+      const top = Math.min(Math.max(y - ph / 2, 12), fh - ph - 12);
+      setPopStyle({ left, top, transformOrigin: `${right ? 'left' : 'right'} center` });
+    }
+    // Show on the next frame so the scale/opacity entrance plays from the new position.
+    setPopShown(false);
+    const r = requestAnimationFrame(() => setPopShown(true));
+    return () => cancelAnimationFrame(r);
+  }, [det, cur, frame.w, frame.h]);
+
+  // Escape closes an open detail.
+  useEffect(() => {
+    if (det < 0) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDet(-1);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeItem, lightboxIndex, visibleItems]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [det]);
 
-  const handlePrevLightbox = () => {
-    if (visibleItems.length <= 1 || lightboxIndex < 0) return;
-    const prevIndex = (lightboxIndex - 1 + visibleItems.length) % visibleItems.length;
-    setLightboxId(visibleItems[prevIndex].id);
+  const openDetail = (k: number) => {
+    setCalm(true);
+    setDet((d) => (d === k ? -1 : k));
   };
 
-  const handleNextLightbox = () => {
-    if (visibleItems.length <= 1 || lightboxIndex < 0) return;
-    const nextIndex = (lightboxIndex + 1) % visibleItems.length;
-    setLightboxId(visibleItems[nextIndex].id);
+  const showProject = (i: number) => {
+    setCalm(true);
+    setDet(-1);
+    setCur(i);
   };
 
-  const markImageBroken = (id: string) => {
-    setBrokenImages((prev) => ({ ...prev, [id]: true }));
-  };
-
-  const buildStyleWhatsappHref = (item: ShowcaseItem) => {
-    const msg = `Hi MN Interiors, I saw "${item.title}" on your website and would like to enquire about similar interior work in Chennai.`;
-    return `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(msg)}`;
-  };
-
-  const renderTile = (item: ShowcaseItem, extraClassName = '', showFeaturedBadge = false) => {
-    const isBroken = Boolean(brokenImages[item.id]);
-
-    return (
-      <button
-        key={item.id}
-        type="button"
-        onClick={() => setLightboxId(item.id)}
-        aria-label={`View ${item.title} in fullscreen`}
-        className={`group relative flex w-full cursor-pointer overflow-hidden rounded-[16px] border border-[#E6E6E6] bg-[#141414] text-left ${extraClassName}`}
-      >
-        {isBroken ? (
-          <div className="flex h-full min-h-[260px] w-full flex-col items-center justify-center bg-[#141414] p-8 text-center">
-            <div className="flex h-[52px] w-[52px] items-center justify-center rounded-[12px] bg-[#F31C60] text-white">
-              <ImageIcon size={26} weight="fill" aria-hidden="true" />
-            </div>
-            <p className="font-display mt-4 text-[18px] font-extrabold text-white">{item.title}</p>
-            <p className="mt-1 text-[13px] text-white/60">{item.area}</p>
-          </div>
-        ) : (
-          <img
-            src={item.imageSrc}
-            alt={item.imageAlt}
-            referrerPolicy="no-referrer"
-            loading="lazy"
-            onError={() => markImageBroken(item.id)}
-            className="h-full w-full object-cover transition-transform duration-200 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-          />
-        )}
-
-        {/* Measured bottom scrim for crisp WCAG AA legibility over any interior photograph */}
-        <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10"
-          aria-hidden="true"
-        />
-
-        {/* Top Row: Optional Featured Tag + Expand Affordance */}
-        <div className="pointer-events-none absolute inset-x-4 top-4 flex items-center justify-between gap-2">
-          {showFeaturedBadge ? (
-            <span className="inline-block rounded-[6px] bg-[#F31C60] px-2.5 py-1.5 text-[11px] font-bold tracking-[0.14em] text-white uppercase">
-              FEATURED WORK
-            </span>
-          ) : (
-            <span className="inline-block rounded-[6px] bg-black/65 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] text-white/95 uppercase backdrop-blur-xs">
-              {item.category}
-            </span>
-          )}
-
-          <span
-            className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[10px] bg-black/65 text-white transition-colors duration-150 group-hover:bg-[#F31C60] backdrop-blur-xs"
-            aria-hidden="true"
-          >
-            <ArrowsOutSimple size={17} weight="fill" />
-          </span>
-        </div>
-
-        {/* Bottom Caption Overlay */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5 max-[680px]:p-4">
-          <div className="flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.12em] text-white/80 uppercase">
-            <MapPin size={13} weight="fill" className="text-[#F31C60]" aria-hidden="true" />
-            <span>{item.area}</span>
-          </div>
-          <h3 className="font-display mt-1.5 text-[20px] leading-[1.2] font-black tracking-[-0.3px] text-white max-[680px]:text-[18px]">
-            {item.title}
-          </h3>
-          {showFeaturedBadge && (
-            <p className="mt-2 line-clamp-2 max-w-[520px] text-[14px] leading-[1.55] text-white/85 max-[680px]:hidden">
-              {item.summary}
-            </p>
-          )}
-        </div>
-      </button>
-    );
-  };
+  const activeDetail = det >= 0 ? item.details[det] : null;
 
   return (
-    <section id="our-work" className="band-section w-full bg-[#F4F4F4] text-[#0A0A0A]">
+    <section id="our-work" className="band-section w-full ws-section">
       <div className="container-main">
-        {/* Centered Intro */}
-        <div className="mx-auto max-w-[740px] text-center" data-reveal>
-          <p className="text-[12px] font-semibold tracking-[0.22em] text-[#D4104C] uppercase">
-            OUR RECENT WORK
-          </p>
-          <h2 className="section-h2 text-[#0A0A0A]">
-            CRAFTED FOR
-            <br />
-            <em>CHENNAI HOMES &amp; SHOPS</em>
-          </h2>
-          <p className="mx-auto max-w-[620px] text-[18px] leading-[1.65] text-[#666666] max-[680px]:text-[16px]">
-            Filter by room and tap any project to view the finish up close. Like a particular
-            style? Send us an enquiry directly from the preview.
+        {/* Section heading */}
+        <div className="ws-head" data-reveal>
+          <div>
+            <p className="ws-eyebrow">Recent work</p>
+            <h2 className="ws-h2">
+              Crafted for Chennai
+              <br />
+              <em>homes and shops.</em>
+            </h2>
+          </div>
+          <p className="ws-intro">
+            Recent kitchens, wardrobes, pooja units and shop interiors, built in our own Kundrathur
+            workshop and fitted in homes across Chennai. Tap the dots to see the details.
           </p>
         </div>
 
-        {/* Interactive Category Filter Bar */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-2.5">
-          {SHOWCASE_CATEGORIES.map((category) => {
-            const isSelected = activeCategory === category;
-            const count =
-              category === 'All Work'
-                ? WORK_SHOWCASE_ITEMS.length
-                : WORK_SHOWCASE_ITEMS.filter((i) => i.category === category).length;
+        <div className="ws" data-calm={calm ? '1' : '0'}>
+          <div className="ws-media">
+            <div className="ws-frame" ref={frameRef} onClick={() => setDet(-1)}>
+              {items.map((p, i) => (
+                <img
+                  key={p.id}
+                  src={p.imageSrc}
+                  alt={i === cur ? p.imageAlt : ''}
+                  aria-hidden={i === cur ? undefined : true}
+                  data-on={i === cur ? '1' : '0'}
+                  width={p.imageWidth}
+                  height={p.imageHeight}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              ))}
 
-            return (
-              <button
-                key={category}
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => {
-                  setActiveCategory(category);
-                  setLightboxId(null);
-                }}
-                className={`relative inline-flex min-h-[44px] shrink-0 cursor-pointer items-center gap-2 overflow-hidden rounded-[10px] px-4 py-2.5 text-[14px] font-bold whitespace-nowrap transition-colors duration-150 active:scale-[0.97] motion-reduce:active:scale-100 ${
-                  isSelected
-                    ? 'text-white'
-                    : 'border border-[#E6E6E6] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]'
-                }`}
+              {frame.w > 0 && (
+                <div className="ws-dots" key={item.id}>
+                  {item.details.map((d, k) => {
+                    const pos = toFrame(d.x, d.y);
+                    return (
+                      <button
+                        key={d.title}
+                        type="button"
+                        className="ws-dot"
+                        data-on={k === det ? '1' : '0'}
+                        aria-pressed={k === det}
+                        aria-label={`Detail ${k + 1}: ${d.title}`}
+                        style={{ left: pos.left, top: pos.top, animationDelay: `${200 + k * 70}ms` }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetail(k);
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+
+              <div
+                ref={popRef}
+                className="ws-pop"
+                role="status"
+                aria-live="polite"
+                data-show={popShown && activeDetail ? '1' : '0'}
+                style={popStyle}
+                onClick={(e) => e.stopPropagation()}
               >
-                {isSelected && (
-                  <motion.span
-                    layoutId="showcase-filter-active"
-                    className="absolute inset-0 rounded-[10px] bg-[#F31C60]"
-                    aria-hidden="true"
-                    transition={{ duration: reduceMotion ? 0 : 0.24, ease: easeOut }}
-                  />
-                )}
-                <span className="relative z-10">{category}</span>
-                <span
-                  className={`font-display relative z-10 text-[12px] font-extrabold tabular-nums ${
-                    isSelected ? 'text-white/85' : 'text-[#666666]'
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Asymmetric Bento Grid (All Work) vs Balanced Filtered Grid.
-            Keyed on the filter so a new selection settles in instead of snapping. */}
-        <motion.div
-          key={activeCategory}
-          initial={
-            reduceMotion
-              ? { opacity: 0, transform: 'translateY(0px)' }
-              : { opacity: 0, transform: 'translateY(8px)' }
-          }
-          animate={{ opacity: 1, transform: 'translateY(0px)' }}
-          transition={{ duration: 0.25, ease: easeOut }}
-        >
-          {activeCategory === 'All Work' ? (
-            <div className="mt-9 space-y-5">
-              {/* Top Bento Row: 2-col wide featured kitchen + 2 stacked right tiles */}
-              <div className="grid grid-cols-3 gap-5 max-[1000px]:grid-cols-2 max-[680px]:grid-cols-1">
-                {/* Lead Showcase Tile (2 cols x 2 rows on desktop) */}
-                {renderTile(
-                  visibleItems[0],
-                  'col-span-2 row-span-2 min-h-[470px] max-[1000px]:col-span-2 max-[1000px]:row-span-1 max-[1000px]:aspect-[16/10] max-[1000px]:min-h-0 max-[680px]:col-span-1 max-[680px]:aspect-[4/3]',
-                  true,
-                )}
-
-                {/* Right Column Stacked Tiles */}
-                {renderTile(
-                  visibleItems[1],
-                  'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
-                )}
-                {renderTile(
-                  visibleItems[2],
-                  'min-h-[225px] max-[1000px]:aspect-[4/3] max-[1000px]:min-h-0',
+                {activeDetail && (
+                  <>
+                    <b>{activeDetail.title}</b>
+                    <span>{activeDetail.text}</span>
+                  </>
                 )}
               </div>
 
-              {/* Bottom Balanced 2-Up Bento Row */}
-              <div className="grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
-                {renderTile(visibleItems[3], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
-                {renderTile(visibleItems[4], 'aspect-[16/10] max-[680px]:aspect-[4/3]')}
-              </div>
+              <span className="ws-hint" aria-hidden="true">
+                Tap the dots to see the details
+              </span>
             </div>
-          ) : visibleItems.length === 1 ? (
-            <div className="mx-auto mt-9 max-w-[820px]">
-              {renderTile(visibleItems[0], 'aspect-[16/10] max-[680px]:aspect-[4/3]', true)}
-            </div>
-          ) : (
-            <div className="mt-9 grid grid-cols-2 gap-5 max-[680px]:grid-cols-1">
-              {visibleItems.map((item) =>
-                renderTile(item, 'aspect-[4/3]'),
+
+            {/* Phones: detail text sits under the photo so it never covers a dot */}
+            <div className="ws-caption" role="status" aria-live="polite">
+              {activeDetail ? (
+                <div className="ws-caption-in" key={`${item.id}-${det}`}>
+                  <b>{activeDetail.title}</b>
+                  <span>{activeDetail.text}</span>
+                </div>
+              ) : (
+                <div className="ws-caption-in ws-caption-hint" key={`${item.id}-hint`}>
+                  Tap a dot on the photo to see that detail.
+                </div>
               )}
             </div>
-          )}
-        </motion.div>
 
-        {/* Bottom strip below gallery */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[14px] border border-[#E6E6E6] bg-white px-6 py-4 max-[680px]:flex-col max-[680px]:items-start">
-          <p className="text-[14.5px] leading-[1.55] text-[#666666]">
-            <strong className="font-semibold text-[#0A0A0A]">
-              Want to see finishes in person?
-            </strong>{' '}
-            Drop by our Kundrathur workshop or request a free home visit anywhere in Chennai.
-          </p>
-          <button
-            type="button"
-            onClick={() => onEnquireStyle('Full Home Interiors', '')}
-            className="btn-pink btn-sm max-[680px]:w-full"
-          >
-            <ChatCircleText size={16} weight="fill" aria-hidden="true" />
-            <span>Ask About Your Home</span>
-          </button>
+            <div className="ws-thumbs" role="group" aria-label="Choose a project">
+              {items.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  data-on={i === cur ? '1' : '0'}
+                  aria-pressed={i === cur}
+                  aria-label={p.title}
+                  onClick={() => showProject(i)}
+                >
+                  <img src={p.imageSrc} alt="" loading="lazy" decoding="async" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="ws-side" key={item.id}>
+            <p className="ws-kicker">
+              <span className="ws-num">{num(cur)}</span>
+              <span className="ws-tag">{item.category}</span>
+            </p>
+            <h3 className="ws-title">{item.title}</h3>
+            <p className="ws-area">{item.area}</p>
+            <p className="ws-summary">{item.summary}</p>
+            <div>
+              <ul className="ws-details">
+                {item.details.map((d, k) => (
+                  <li key={d.title}>
+                    <button type="button" data-on={k === det ? '1' : '0'} onClick={() => openDetail(k)}>
+                      <span>{k + 1}</span>
+                      {d.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                className="btn-pink ws-cta"
+                onClick={() => onEnquireStyle(item.enquiryScope, item.title)}
+              >
+                Enquire about a similar {item.enquiryScope.startsWith('Shop') ? 'shop' : 'design'} →
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Fullscreen Lightbox Viewer */}
-      <AnimatePresence>
-        {activeItem && (
-          <motion.div
-            key="lightbox-overlay"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-xs max-[680px]:p-3"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="lightbox-title"
-            onClick={() => setLightboxId(null)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { duration: 0.2, ease: easeOut } }}
-            exit={{ opacity: 0, transition: { duration: 0.15, ease: easeOut } }}
-          >
-            <motion.div
-              className="relative max-h-[94vh] w-full max-w-[1120px] overflow-y-auto rounded-[20px] border border-white/15 bg-[#0A0A0A] text-white"
-              onClick={(e) => e.stopPropagation()}
-              initial={
-                reduceMotion
-                  ? { opacity: 0, transform: 'scale(1)' }
-                  : { opacity: 0, transform: 'scale(0.96)' }
-              }
-              animate={{ opacity: 1, transform: 'scale(1)', transition: { duration: 0.3, ease: easeDrawer } }}
-              exit={
-                reduceMotion
-                  ? { opacity: 0, transition: { duration: 0.15 } }
-                  : { opacity: 0, transform: 'scale(0.97)', transition: { duration: 0.15, ease: easeOut } }
-              }
-            >
-              {/* Top Bar inside Lightbox */}
-              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-4 max-[680px]:px-4">
-                <div className="flex items-center gap-3">
-                  <span className="rounded-[6px] bg-[#F31C60] px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-white uppercase">
-                    {activeItem.category}
-                  </span>
-                  <span className="font-display text-[13px] font-bold text-white/60 tabular-nums">
-                    {String(lightboxIndex + 1).padStart(2, '0')} /{' '}
-                    {String(visibleItems.length).padStart(2, '0')}
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setLightboxId(null)}
-                  aria-label="Close fullscreen preview"
-                  className="flex h-[40px] w-[40px] shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-[#141414] text-white transition-colors hover:bg-[#F31C60]"
-                >
-                  <X size={18} weight="bold" aria-hidden="true" />
-                </button>
-              </div>
-
-              {/* Split Media + Details Body */}
-              <div className="grid grid-cols-[1.35fr_0.65fr] max-[920px]:grid-cols-1">
-                {/* High-Res Photo Stage */}
-                <div className="relative flex min-h-[340px] items-center justify-center bg-black p-4 max-[680px]:min-h-[240px] max-[680px]:p-2">
-                  {brokenImages[activeItem.id] ? (
-                    <div className="flex h-[360px] w-full flex-col items-center justify-center rounded-[12px] bg-[#141414] p-8 text-center">
-                      <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[14px] bg-[#F31C60] text-white">
-                        <ImageIcon size={28} weight="fill" aria-hidden="true" />
-                      </div>
-                      <p className="font-display mt-4 text-[20px] font-extrabold text-white">
-                        {activeItem.title}
-                      </p>
-                    </div>
-                  ) : (
-                    <motion.img
-                      key={activeItem.id}
-                      src={activeItem.imageSrc}
-                      alt={activeItem.imageAlt}
-                      referrerPolicy="no-referrer"
-                      onError={() => markImageBroken(activeItem.id)}
-                      className="max-h-[68vh] w-full rounded-[12px] object-contain"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2, ease: easeOut }}
-                    />
-                  )}
-                </div>
-
-                {/* Project Details & Direct Style Enquiry Panel */}
-                <div className="flex flex-col justify-between border-l border-white/10 bg-[#141414] p-6 max-[920px]:border-t max-[920px]:border-l-0 max-[680px]:p-5">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.14em] text-[#F31C60] uppercase">
-                      <MapPin size={14} weight="fill" aria-hidden="true" />
-                      <span>{activeItem.area}</span>
-                    </div>
-
-                    <h3
-                      id="lightbox-title"
-                      className="font-display mt-2 text-[24px] leading-[1.15] font-black tracking-[-0.4px] text-white"
-                    >
-                      {activeItem.title}
-                    </h3>
-
-                    <p className="mt-3 text-[14.5px] leading-[1.65] text-white/75">
-                      {activeItem.summary}
-                    </p>
-
-                    <ul className="mt-5 space-y-2.5 border-t border-white/10 pt-5">
-                      {activeItem.highlights.map((hl) => (
-                        <li key={hl} className="flex items-start gap-2.5 text-[13.5px] text-white/85">
-                          <span className="mt-0.5 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-[6px] bg-[#F31C60] text-white">
-                            <Check size={11} weight="bold" aria-hidden="true" />
-                          </span>
-                          <span>{hl}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const scope = activeItem.enquiryScope;
-                        const title = activeItem.title;
-                        setLightboxId(null);
-                        onEnquireStyle(scope, title);
-                      }}
-                      className="btn-pink btn-md w-full"
-                    >
-                      <ChatCircleText size={17} weight="fill" aria-hidden="true" />
-                      <span>Enquire About This Style</span>
-                    </button>
-
-                    <a
-                      href={buildStyleWhatsappHref(activeItem)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-ghost btn-sm w-full"
-                    >
-                      <WhatsappLogo
-                        size={17}
-                        weight="fill"
-                        className="text-[#2FD47A]"
-                        aria-hidden="true"
-                      />
-                      <span>WhatsApp About This Style</span>
-                    </a>
-
-                    {visibleItems.length > 1 && (
-                      <div className="grid grid-cols-2 gap-2 pt-2">
-                        <button
-                          type="button"
-                          onClick={handlePrevLightbox}
-                          className="btn-ghost btn-sm w-full"
-                        >
-                          <ArrowLeft size={15} weight="fill" aria-hidden="true" />
-                          <span>Previous</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleNextLightbox}
-                          className="btn-ghost btn-sm w-full"
-                        >
-                          <span>Next</span>
-                          <ArrowRight size={15} weight="fill" aria-hidden="true" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
