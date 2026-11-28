@@ -451,7 +451,16 @@ const inits = [initIndex, initChapters, initSpot];
 
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-scope]');
-  if (b) alert(`Would open the booking form with "${b.dataset.scope}" preselected.`);
+  if (!b) return;
+  let t = document.getElementById('demo-toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'demo-toast';
+    t.style.cssText = 'position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:2147483646;background:#16181D;color:#FAFAF8;font:500 14px Manrope,system-ui,sans-serif;padding:12px 16px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.25);max-width:calc(100vw - 32px);text-align:center;transition:opacity 200ms ease-out;opacity:0';
+    document.body.appendChild(t);
+  }
+  t.textContent = 'Demo: this would open the booking form with "' + b.dataset.scope + '" selected.';
+  t.style.opacity = '1';
+  clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = '0'; }, 2600);
 });
 
 /* ---------- picker wiring (reference, plus per-variant init/cleanup) ---------- */
